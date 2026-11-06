@@ -1,0 +1,49 @@
+# Wärmepumpe (Tuya, Luft-Wasser R290): Strom- und Wärmemengen-Zähler
+# Die Tuya-App zeigt die Zähler unter Settings → Parameter Details.
+# Über die Integration "Xtend Tuya" kommen sie als Sensoren in Home Assistant,
+# springen aber beim Verbindungsabbruch kurz auf 0. Diese Template-Helfer
+# fangen das ab und liefern saubere Energiezähler fürs Energie-Dashboard.
+
+# --- Template-Sensor "Energiezähler Wärmepumpe Strom" ---
+# Zustand:
+{{ states('sensor.waermepumpe_power_consumption') | float }}
+# Verfügbarkeit (Erweiterte Optionen):
+{{ has_value('sensor.waermepumpe_power_consumption')
+   and states('sensor.waermepumpe_power_consumption') | float(0) > 0 }}
+# device_class: energy · state_class: total_increasing · Einheit: kWh
+
+---
+# --- Template-Sensor "Energiezähler Wärmepumpe Wärme" ---
+# Zustand:
+{{ states('sensor.waermepumpe_produced_heat') | float }}
+# Verfügbarkeit:
+{{ has_value('sensor.waermepumpe_produced_heat')
+   and states('sensor.waermepumpe_produced_heat') | float(0) > 0 }}
+# device_class: energy · state_class: total_increasing · Einheit: kWh
+
+---
+# --- Verbrauchszähler (Helfer → Verbrauchszähler) ---
+# Quelle sensor.energiezaehler_waermepumpe_strom → Strom heute / Monat / Jahr
+# Quelle sensor.energiezaehler_waermepumpe_waerme → Wärme heute / Monat / Jahr
+name: Wärmepumpe Strom heute
+source: sensor.energiezaehler_waermepumpe_strom
+cycle: daily
+periodically_resetting: false
+always_available: true
+
+---
+# --- Verlaufsstatistik "Wärmepumpe Einschaltzeit heute" ---
+# (Helfer → Verlaufsstatistik, Typ: Zeit)
+name: Wärmepumpe Einschaltzeit heute
+entity_id: switch.waermepumpe_schalter
+state: ["on"]
+type: time
+start: "{{ now().replace(hour=0, minute=0, second=0, microsecond=0) }}"
+end: "{{ now() }}"
+
+---
+# --- Template-Sensor "WP Ersparnis gesamt" (€) ---
+# Gesamtersparnis aller Anlagen minus PV-Anteil = Ersparnis der Wärmepumpe
+# gegenüber der früheren Gasheizung
+{{ (states('sensor.anlagen_ersparnis_gesamt') | float(0)
+    - states('sensor.pv_ersparnis_gesamt') | float(0)) | round(0) }}

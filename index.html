@@ -139,8 +139,11 @@
       <p>Ein Tasmota-Lesekopf am Zähler liefert Netzbezug und Einspeisung.</p>
       <ul><li>Verbrauchszähler für Tag, Monat, Jahr</li><li>Ersparnis gegenüber früher</li></ul></div>
     <div class="card"><div class="icon">🌡️</div><h3>Wärmepumpe</h3>
-      <p>Luft-Wasser-Wärmepumpe (R290) über Tuya – Strom- und Wärmemengen-Zähler werden ausgelesen.</p>
-      <ul><li>Laufzeit pro Tag</li><li>Solarstrom-Anteil</li></ul></div>
+      <p>Luft-Wasser-Wärmepumpe (R290) über Tuya – Strom- und Wärmemengen-Zähler direkt aus dem Gerät.</p>
+      <ul><li>Strom und Wärme pro Tag, Monat, Jahr</li><li>Einschaltzeit und Solarstrom-Anteil</li><li>Ersparnis gegenüber der alten Gasheizung</li></ul></div>
+    <div class="card"><div class="icon">💶</div><h3>Kosten &amp; Amortisation</h3>
+      <p>Strompreis, Einspeisevergütung und Anschaffungskosten als Helfer – daraus rechnet Home Assistant die Ersparnis.</p>
+      <ul><li>PV und Wärmepumpe getrennt</li><li>Restbetrag und voraussichtliches „bezahlt am“</li></ul></div>
     <div class="card"><div class="icon">🔥</div><h3>Pelletofen</h3>
       <p>Oranier-Ofen mit smartCon-Modul: Raumtemperatur, Abgastemperatur, Status und Solltemperatur per Schieber.</p>
       <ul><li>Start/Stopp nur mit Bestätigung</li><li>Sollwert begrenzt auf 19–26 °C</li></ul></div>
@@ -221,6 +224,8 @@
     { f: 'alexa-durchsage.yaml',  i: '📢', t: 'Alexa-Durchsage',          d: 'Skript mit Zielauswahl' },
     { f: 'dashboard-auf-tv.yaml', i: '📺', t: 'Dashboard auf TV',         d: 'Skript mit Google Cast' },
     { f: 'energie.yaml',          i: '☀️', t: 'Energie-Sensoren',         d: 'Hausverbrauch und Amortisation' },
+    { f: 'waermepumpe.yaml',      i: '🌡️', t: 'Wärmepumpe',               d: 'Energiezähler, Laufzeit, Ersparnis' },
+    { f: 'pelletofen.yaml',       i: '🔥', t: 'Pelletofen',               d: 'Status-Klartext und begrenzter Sollwert' },
   ];
 
   const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');

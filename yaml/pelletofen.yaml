@@ -1,0 +1,43 @@
+# Pelletofen (Oranier mit smartCon-Modul)
+# Ein Sensor "oranier_rohdaten" holt die Rohwerte vom Modul im Heimnetz
+# (Adresse hier bewusst weggelassen). Template-Helfer machen daraus
+# lesbare Werte und einen begrenzten Sollwert-Schieber.
+
+# --- Template-Sensor "Pelletofen Status" ---
+# Code J30001xx aus den Rohdaten → Klartext; hält den letzten Wert 10 Minuten
+{% set m = (state_attr('sensor.oranier_rohdaten','v') or [])
+           | select('match','J30001') | list %}
+{% if m %}
+  {% set c = m[0][6:] | int(-1) %}
+  {{ {0:'Aus', 2:'Zündung', 5:'Heizbetrieb', 7:'Ausbrand', 11:'Standby'}.get(c, 'Code ' ~ c) }}
+{% elif (now() - states.sensor.oranier_rohdaten.last_changed).total_seconds() < 600 %}
+  {{ this.state }}
+{% else %}
+  unavailable
+{% endif %}
+
+---
+# --- Template-Zahl "Pelletofen Raum-Soll" (Schieber 19–26 °C) ---
+# Der Wert wird zusätzlich im Befehl auf maximal 26 °C begrenzt.
+name: Pelletofen Raum-Soll
+min: 19
+max: 26
+step: 1
+unit_of_measurement: "°C"
+state: "{{ states('sensor.pelletofen_solltemperatur_raum') }}"
+set_value:
+  - action: shell_command.ofen_raumsoll   # schickt den Wert ans Modul
+    data:
+      temp: "{{ [value | int, 26] | min }}"
+  - action: homeassistant.update_entity
+    target:
+      entity_id: sensor.oranier_rohdaten
+
+---
+# --- Skripte "Pelletofen starten" / "Pelletofen stoppen" ---
+# Im Dashboard nur mit Bestätigungsabfrage (confirmation) verknüpft.
+alias: Pelletofen starten
+icon: mdi:fire
+mode: single
+sequence:
+  - action: shell_command.ofen_start
