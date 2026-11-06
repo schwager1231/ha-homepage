@@ -111,6 +111,19 @@
   .shot img { display: block; width: 100%; max-width: 100%; height: auto; }
   .shot figcaption { color: var(--muted); font-size: 15px; margin-top: 18px; }
   .shot figcaption b { color: var(--text); display: block; font-size: 17px; margin-bottom: 2px; }
+
+  /* Entstehung */
+  .duo { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 56px; }
+  .duo .who { font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--sun); margin: 0 0 10px; }
+  .duo .card.claude .who { color: var(--accent); }
+  .steps { list-style: none; padding: 0; margin: 0; display: grid; gap: 0; max-width: 760px; }
+  .steps li { display: grid; grid-template-columns: 44px 1fr; gap: 16px; padding: 20px 0; border-top: 1px solid var(--card-border); }
+  .steps li:last-child { border-bottom: 1px solid var(--card-border); }
+  .steps .n { font-size: 15px; font-weight: 600; color: var(--dim); font-variant-numeric: tabular-nums; padding-top: 2px; }
+  .steps b { display: block; font-size: 18px; margin-bottom: 4px; }
+  .steps p { margin: 0; color: var(--muted); }
+  .quote { font-size: clamp(22px, 3vw, 30px); line-height: 1.3; letter-spacing: -.01em; max-width: 760px; margin: 56px 0 0; text-wrap: balance; }
+  .quote span { display: block; font-size: 15px; color: var(--muted); margin-top: 12px; letter-spacing: 0; }
 </style>
 </head>
 <body>
@@ -123,6 +136,7 @@
     <a href="#komfort">Komfort</a>
     <a href="#automationen">Automationen</a>
     <a href="#technik">Technik</a>
+    <a href="#entstehung">Entstehung</a>
     <a href="#feedback">Feedback</a>
   </div>
 </nav>
@@ -231,6 +245,41 @@
       <span class="pill">Sonoff</span><span class="pill">Gree Klima</span><span class="pill">Google Cast</span>
       <span class="pill">Android TV</span><span class="pill">Samsung TV</span></div>
   </div>
+</section>
+
+<section id="entstehung">
+  <h2>Gebaut zu zweit.</h2>
+  <p class="sub">Diese Seite ist an einem Nachmittag entstanden, im Gespräch zwischen mir und Claude, einer KI von Anthropic. Ich hatte die Ideen und das Haus, Claude hat gelesen, geschrieben und geprüft.</p>
+
+  <div class="duo">
+    <div class="card"><p class="who">Ich</p><h3>Idee, Haus, Entscheidungen</h3>
+      <ul><li>Wünsche zum Stil: dunkel, ruhig, wie bei Apple oder Tesla</li>
+        <li>Entschieden, was gezeigt wird und was privat bleibt</li>
+        <li>Konten angelegt und Freigaben erteilt</li>
+        <li>Getestet, zurückgemeldet, nachgeschärft</li></ul></div>
+    <div class="card claude"><p class="who">Claude</p><h3>Lesen, schreiben, prüfen</h3>
+      <ul><li>Konfiguration direkt aus Home Assistant gelesen</li>
+        <li>Automationen in nachbaubare Beispiele übersetzt</li>
+        <li>Seite gestaltet, programmiert und hochgeladen</li>
+        <li>Jede Version auf private Daten durchsucht</li></ul></div>
+  </div>
+
+  <ol class="steps">
+    <li><span class="n">1</span><div><b>Erst WordPress, dann ein besserer Weg</b>
+      <p>Geplant war eine Seite auf dem eigenen NAS. Claude schlug GitHub Pages vor: kein Server, der offen im Internet steht, keine Updates, HTTPS inklusive.</p></div></li>
+    <li><span class="n">2</span><div><b>Konfiguration auslesen</b>
+      <p>Über eine Schnittstelle zu Home Assistant hat Claude Automationen, Skripte und Helfer gelesen, ohne dass ich etwas exportieren musste.</p></div></li>
+    <li><span class="n">3</span><div><b>Anonymisieren, und zwar gründlich</b>
+      <p>Namen, IP-Adressen, Seriennummern, E-Mail-Adressen, Geräte-IDs und der echte Müllkalender wurden ersetzt. Ein Prüfskript hat jede Datei mehrfach durchsucht, zum Schluss auch die fertige Live-Seite.</p></div></li>
+    <li><span class="n">4</span><div><b>Vorschau, Feedback, Feinschliff</b>
+      <p>Ich habe die Seite vorab privat angesehen. Danach kamen Wärmepumpe, Pelletofen, Kosten und die beiden Dashboard-Karten dazu.</p></div></li>
+    <li><span class="n">5</span><div><b>Live schalten</b>
+      <p>Der erste Versuch brach bei GitHub mit einer Zeitüberschreitung ab. Claude hat den Fehler eingegrenzt und die Veröffentlichung neu angestoßen.</p></div></li>
+    <li><span class="n">6</span><div><b>Statistik und Feedback</b>
+      <p>Zum Schluss kamen eine Besucherstatistik ohne Cookies und dieser Kommentarbereich dazu.</p></div></li>
+  </ol>
+
+  <p class="quote">Die Ideen und Entscheidungen kamen von mir, die Fleißarbeit und das Prüfen von Claude. So macht Basteln Spaß.<span>Mein Fazit nach einem Nachmittag</span></p>
 </section>
 
 <div class="band"><section id="feedback">
