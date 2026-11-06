@@ -1,4 +1,4 @@
-# Wärmepumpe (Tuya, Luft-Wasser R290): Strom- und Wärmemengen-Zähler
+# Wärmepumpe Krone ECOS-08-MWP (Tuya, Luft-Wasser R290): Strom- und Wärmemengen-Zähler
 # Die Tuya-App zeigt die Zähler unter Settings → Parameter Details.
 # Über die Integration "Xtend Tuya" kommen sie als Sensoren in Home Assistant,
 # springen aber beim Verbindungsabbruch kurz auf 0. Diese Template-Helfer
