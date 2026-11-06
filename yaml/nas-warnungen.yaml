@@ -1,0 +1,59 @@
+# NAS-Überwachung: Festplatten, Volume, Sicherheit, Füllstand, Temperatur
+alias: "NAS – Warnungen"
+description: >-
+  Benachrichtigt aufs Smartphone bei Problemen mit Festplatten, Volume,
+  Sicherheit, Füllstand oder Temperatur des NAS.
+mode: queued
+triggers:
+  - id: status
+    trigger: state
+    entity_id:
+      - sensor.nas_drive_1_status
+      - sensor.nas_drive_1_status_smart
+      - sensor.nas_drive_2_status
+      - sensor.nas_drive_2_status_smart
+      - sensor.nas_volume_1_status
+    not_to: [normal, unavailable, unknown]
+    for:
+      minutes: 5
+  - id: status
+    trigger: state
+    entity_id:
+      - binary_sensor.nas_drive_1_max_fehlerhafte_sektoren_uberschritten
+      - binary_sensor.nas_drive_1_unterhalb_der_mindestrestlebensdauer
+      - binary_sensor.nas_drive_2_max_fehlerhafte_sektoren_uberschritten
+      - binary_sensor.nas_drive_2_unterhalb_der_mindestrestlebensdauer
+      - binary_sensor.nas_sicherheitsstatus
+    to: "on"
+    for:
+      minutes: 5
+  - id: schwelle
+    trigger: numeric_state
+    entity_id: sensor.nas_volume_1_volume_nutzung
+    above: 85
+  - id: schwelle
+    trigger: numeric_state
+    entity_id: sensor.nas_temperatur
+    above: 60
+    for:
+      minutes: 10
+conditions:
+  # Schwellwert-Trigger nach einem Neustart (unavailable -> Wert) ignorieren
+  - condition: or
+    conditions:
+      - condition: trigger
+        id: status
+      - condition: template
+        value_template: >-
+          {{ trigger.from_state is not none and
+             trigger.from_state.state not in ['unavailable', 'unknown'] }}
+actions:
+  - action: notify.send_message
+    target:
+      entity_id: notify.smartphone
+    data:
+      title: "⚠️ NAS"
+      message: >-
+        {{ trigger.to_state.name }}: {{ trigger.to_state.state }}
+        {{- ' ' ~ trigger.to_state.attributes.unit_of_measurement
+            if trigger.to_state.attributes.unit_of_measurement is defined else '' }}

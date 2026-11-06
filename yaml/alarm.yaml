@@ -1,0 +1,72 @@
+# Alarmanlage automatisch scharf/unscharf je nach Anwesenheit
+# (Blink-Kameras + UniFi Alarm-Manager)
+
+alias: "Alarm: automatisch scharf, wenn niemand zuhause"
+description: >-
+  Schaltet beide Alarmsysteme scharf, wenn Bewohner 1 seit 10 Minuten weg ist
+  und auch sonst niemand zuhause gemeldet ist.
+mode: single
+triggers:
+  - trigger: state
+    entity_id: person.bewohner_1
+    to: not_home
+    for:
+      minutes: 10
+conditions:
+  - condition: numeric_state
+    entity_id: zone.home
+    below: 1
+  - condition: not
+    conditions:
+      - condition: state
+        entity_id: person.bewohner_2
+        state: home
+actions:
+  - action: alarm_control_panel.alarm_arm_away
+    continue_on_error: true
+    target:
+      entity_id:
+        - alarm_control_panel.blink_zuhause
+        - alarm_control_panel.unifi_alarm_manager
+  - action: notify.send_message
+    target:
+      entity_id: [notify.tablet, notify.smartphone]
+    data:
+      title: "🔐 Alarm scharf"
+      message: "Niemand ist zuhause. Blink und UniFi Alarm-Manager wurden auf scharf geschaltet."
+
+---
+alias: "Alarm: automatisch unscharf bei Heimkehr"
+description: >-
+  Schaltet beide Alarmsysteme unscharf, sobald Bewohner 1 ankommt.
+  Tagsüber begrüßt zusätzlich die Echo Show in der Küche.
+mode: single
+triggers:
+  - trigger: state
+    entity_id: person.bewohner_1
+    from: not_home
+    to: home
+actions:
+  - action: alarm_control_panel.alarm_disarm
+    continue_on_error: true
+    target:
+      entity_id:
+        - alarm_control_panel.blink_zuhause
+        - alarm_control_panel.unifi_alarm_manager
+  - action: notify.send_message
+    target:
+      entity_id: [notify.tablet, notify.smartphone]
+    data:
+      title: "🏠 Alarm unscharf"
+      message: "Willkommen zuhause. Blink und UniFi Alarm-Manager wurden auf unscharf geschaltet."
+  - if:
+      - condition: time
+        after: "07:00:00"
+        before: "23:00:00"
+    then:
+      - action: notify.send_message
+        continue_on_error: true
+        target:
+          entity_id: notify.echo_show_kueche_sprechen
+        data:
+          message: "Willkommen zuhause. Der Alarm ist jetzt unscharf."

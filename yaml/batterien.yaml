@@ -1,0 +1,68 @@
+# Batterie-Überwachung: ein Template-Sensor sammelt alle schwachen Geräte,
+# zwei Automationen melden sofort bzw. täglich.
+
+# --- Template-Sensor (Helfer → Template → Sensor), Zustand: ---
+# Name: Batterien kritisch Liste
+{%- set ns = namespace(n=[]) -%}
+{%- for s in states.sensor
+      if s.attributes.device_class is defined
+      and s.attributes.device_class == 'battery' -%}
+  {%- set nm = s.name | replace(' Batterie','') | replace(' Battery Level','') | trim -%}
+  {%- if s.state == 'unavailable' -%}
+    {%- set ns.n = ns.n + [nm ~ ' (offline, Akku leer?)'] -%}
+  {%- elif s.state not in ['unknown'] and s.state | float(100) < 20 -%}
+    {%- set ns.n = ns.n + [nm ~ ' (' ~ (s.state | float(0) | round(0) | int) ~ ' %)'] -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- for s in states.binary_sensor
+      if s.attributes.device_class is defined
+      and s.attributes.device_class == 'battery' and s.state == 'on' -%}
+  {%- set ns.n = ns.n + [s.name ~ ' (schwach)'] -%}
+{%- endfor -%}
+{{ (ns.n | join(', '))[:250] if ns.n else 'keine' }}
+
+---
+# --- Automation 1: sofort melden ---
+alias: "Batterien: sofort melden wenn kritisch"
+description: >-
+  Meldet, wenn sich die Liste ändert und 30 Minuten stabil bleibt.
+  Die Wartezeit verhindert Fehlalarme nach einem Neustart.
+mode: queued
+max: 5
+triggers:
+  - trigger: state
+    entity_id: sensor.batterien_kritisch_liste
+    for:
+      minutes: 30
+    not_from: [unavailable, unknown]
+    not_to: [unavailable, unknown]
+conditions:
+  - condition: numeric_state
+    entity_id: sensor.batterien_kritisch_anzahl
+    above: 0
+actions:
+  - action: notify.send_message
+    target:
+      entity_id: [notify.tablet, notify.smartphone]
+    data:
+      title: "🔋 Batterie schwach"
+      message: "{{ states('sensor.batterien_kritisch_liste') }}"
+
+---
+# --- Automation 2: tägliche Erinnerung um 9 Uhr ---
+alias: "Batterien: tägliche Erinnerung"
+mode: single
+triggers:
+  - trigger: time
+    at: "09:00:00"
+conditions:
+  - condition: numeric_state
+    entity_id: sensor.batterien_kritisch_anzahl
+    above: 0
+actions:
+  - action: notify.send_message
+    target:
+      entity_id: [notify.tablet, notify.smartphone]
+    data:
+      title: "🔋 Batterien prüfen ({{ states('sensor.batterien_kritisch_anzahl') }})"
+      message: "{{ states('sensor.batterien_kritisch_liste') }}"

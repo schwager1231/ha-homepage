@@ -1,0 +1,50 @@
+# Skript: Alexa-Durchsage mit Zielauswahl (Überall / Erdgeschoss / Obergeschoss)
+# Voraussetzung: Integration "Alexa Devices"
+alias: "Alexa: Durchsage"
+description: Macht eine Alexa-Durchsage mit dem Text an das gewählte Ziel.
+icon: mdi:bullhorn
+mode: queued
+max: 5
+fields:
+  text:
+    name: Text
+    description: Text der Durchsage
+    required: true
+    selector:
+      text: {}
+  ziel:
+    name: Ziel
+    description: Wo die Durchsage kommen soll
+    required: true
+    default: Überall
+    selector:
+      select:
+        options: [Überall, Erdgeschoss, Obergeschoss]
+sequence:
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: "{{ ziel == 'Erdgeschoss' }}"
+        sequence:
+          - action: notify.send_message
+            target:
+              entity_id: notify.echo_show_kueche_durchsagen
+            data:
+              message: "{{ text }}"
+      - conditions:
+          - condition: template
+            value_template: "{{ ziel == 'Obergeschoss' }}"
+        sequence:
+          - action: notify.send_message
+            target:
+              entity_id:
+                - notify.echo_show_5_og_durchsagen
+                - notify.echo_show_8_og_durchsagen
+            data:
+              message: "{{ text }}"
+    default:
+      - action: notify.send_message
+        target:
+          entity_id: notify.alexa_ueberall_durchsagen
+        data:
+          message: "{{ text }}"

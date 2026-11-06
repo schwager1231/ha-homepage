@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smart Home mit Home Assistant</title>
+<meta name="description" content="Ein privates Smart-Home-Projekt mit Home Assistant: Energie, Sicherheit, Komfort – mit anonymisierten Konfigurationsbeispielen.">
+<style>
+  :root {
+    --bg: #000;
+    --bg-2: #0b0c0f;
+    --card: rgba(255,255,255,.045);
+    --card-border: rgba(255,255,255,.09);
+    --text: #f5f5f7;
+    --muted: #a1a1a6;
+    --dim: #6e6e73;
+    --accent: #2997ff;
+    --sun: #ffb340;
+    --red: #ff453a;
+    --green: #30d158;
+    --code-bg: #111216;
+    --radius: 22px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased; line-height: 1.5;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Navigation */
+  nav {
+    position: sticky; top: 0; z-index: 10;
+    backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px);
+    background: rgba(0,0,0,.72); border-bottom: 1px solid rgba(255,255,255,.06);
+  }
+  .nav-inner { max-width: 1080px; margin: 0 auto; padding: 0 16px; height: 48px;
+    display: flex; align-items: center; gap: 24px; overflow-x: auto; }
+  .nav-inner .brand { font-weight: 600; margin-right: auto; white-space: nowrap; }
+  .nav-inner a { color: var(--muted); font-size: 13px; white-space: nowrap; }
+  .nav-inner a:hover { color: var(--text); text-decoration: none; }
+
+  /* Hero */
+  .hero { text-align: center; padding: 120px 16px 96px;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(41,151,255,.18), transparent 70%); }
+  .eyebrow { color: var(--sun); font-weight: 600; font-size: 17px; margin: 0 0 12px; }
+  .hero h1 { font-size: clamp(44px, 8vw, 88px); line-height: 1.04; letter-spacing: -.02em; margin: 0 0 20px; font-weight: 700; }
+  .hero p.lead { font-size: clamp(19px, 2.4vw, 26px); color: var(--muted); max-width: 720px; margin: 0 auto; }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; max-width: 900px; margin: 72px auto 0; }
+  .stat .n { font-size: clamp(36px, 5vw, 56px); font-weight: 700; letter-spacing: -.02em; }
+  .stat .l { color: var(--muted); font-size: 15px; }
+
+  section { max-width: 1080px; margin: 0 auto; padding: 96px 16px; }
+  section h2 { font-size: clamp(34px, 5vw, 56px); letter-spacing: -.02em; line-height: 1.08; margin: 0 0 12px; }
+  section .sub { color: var(--muted); font-size: 21px; max-width: 680px; margin: 0 0 48px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+  .card { background: var(--card); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 28px; }
+  .card .icon { font-size: 34px; line-height: 1; margin-bottom: 16px; }
+  .card h3 { font-size: 22px; margin: 0 0 8px; letter-spacing: -.01em; }
+  .card p { color: var(--muted); margin: 0; }
+  .card ul { color: var(--muted); padding-left: 18px; margin: 12px 0 0; }
+  .card li { margin: 4px 0; }
+
+  .band { background: var(--bg-2); border-top: 1px solid rgba(255,255,255,.05); border-bottom: 1px solid rgba(255,255,255,.05); }
+
+  /* Automationen */
+  .auto { margin-bottom: 16px; }
+  .auto details { background: var(--card); border: 1px solid var(--card-border); border-radius: var(--radius); overflow: hidden; }
+  .auto summary { list-style: none; cursor: pointer; padding: 22px 28px; display: flex; gap: 16px; align-items: center; }
+  .auto summary::-webkit-details-marker { display: none; }
+  .auto summary .icon { font-size: 28px; }
+  .auto summary .t { flex: 1; }
+  .auto summary .t b { display: block; font-size: 19px; }
+  .auto summary .t span { color: var(--muted); font-size: 15px; }
+  .auto summary .chev { color: var(--dim); transition: transform .2s; font-size: 20px; }
+  .auto details[open] .chev { transform: rotate(90deg); }
+  .code-wrap { position: relative; border-top: 1px solid var(--card-border); }
+  pre { margin: 0; padding: 24px 28px; background: var(--code-bg); overflow-x: auto;
+    font: 13px/1.6 "SF Mono", ui-monospace, Menlo, Consolas, monospace; color: #d1d1d6; }
+  .copy { position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,.1); color: var(--text);
+    border: 0; border-radius: 980px; padding: 6px 14px; font-size: 13px; cursor: pointer; }
+  .copy:hover { background: rgba(255,255,255,.18); }
+  .tok-c { color: #6e7781; } .tok-k { color: #79c0ff; } .tok-s { color: #a5d6ff; }
+
+  .pill { display: inline-block; font-size: 13px; padding: 4px 12px; border-radius: 980px;
+    background: rgba(255,255,255,.08); color: var(--muted); margin: 4px 6px 0 0; }
+
+  .note { border-left: 3px solid var(--green); padding: 4px 0 4px 16px; color: var(--muted); max-width: 720px; }
+
+  footer { text-align: center; color: var(--dim); font-size: 13px; padding: 48px 16px 64px; border-top: 1px solid rgba(255,255,255,.06); }
+
+  @media (max-width: 700px) {
+    .stats { grid-template-columns: repeat(2, 1fr); gap: 32px 16px; }
+    .hero { padding: 80px 16px 64px; }
+    section { padding: 64px 16px; }
+    .auto summary { padding: 18px 20px; }
+    pre { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <span class="brand">⌂ Smart Home</span>
+    <a href="#energie">Energie</a>
+    <a href="#sicherheit">Sicherheit</a>
+    <a href="#komfort">Komfort</a>
+    <a href="#automationen">Automationen</a>
+    <a href="#technik">Technik</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <p class="eyebrow">Home Assistant · Projekt</p>
+  <h1>Ein Haus,<br>das mitdenkt.</h1>
+  <p class="lead">Photovoltaik, Wärmepumpe, Pelletofen, Kameras und Alexa – alles in einer Oberfläche, lokal gesteuert und automatisiert.</p>
+  <div class="stats">
+    <div class="stat"><div class="n">85</div><div class="l">Integrationen</div></div>
+    <div class="stat"><div class="n">400+</div><div class="l">Entitäten</div></div>
+    <div class="stat"><div class="n">10</div><div class="l">Automationen</div></div>
+    <div class="stat"><div class="n">15</div><div class="l">Kameras</div></div>
+  </div>
+</header>
+
+<section id="energie">
+  <h2>Energie im Blick.</h2>
+  <p class="sub">Jede Kilowattstunde wird gemessen: was die Sonne liefert, was das Haus verbraucht und was ins Netz geht.</p>
+  <div class="grid">
+    <div class="card"><div class="icon">☀️</div><h3>Photovoltaik</h3>
+      <p>SolaX-Wechselrichter über die Cloud-API, dazu zwei Balkonkraftwerke von APsystems.</p>
+      <ul><li>Live-Leistung und Hausverbrauch</li><li>Amortisation in Prozent</li></ul></div>
+    <div class="card"><div class="icon">⚡</div><h3>Stromzähler</h3>
+      <p>Ein Tasmota-Lesekopf am Zähler liefert Netzbezug und Einspeisung.</p>
+      <ul><li>Verbrauchszähler für Tag, Monat, Jahr</li><li>Ersparnis gegenüber früher</li></ul></div>
+    <div class="card"><div class="icon">🌡️</div><h3>Wärmepumpe</h3>
+      <p>Luft-Wasser-Wärmepumpe (R290) über Tuya – Strom- und Wärmemengen-Zähler werden ausgelesen.</p>
+      <ul><li>Laufzeit pro Tag</li><li>Solarstrom-Anteil</li></ul></div>
+    <div class="card"><div class="icon">🔥</div><h3>Pelletofen</h3>
+      <p>Oranier-Ofen mit smartCon-Modul: Raumtemperatur, Abgastemperatur, Status und Solltemperatur per Schieber.</p>
+      <ul><li>Start/Stopp nur mit Bestätigung</li><li>Sollwert begrenzt auf 19–26 °C</li></ul></div>
+  </div>
+</section>
+
+<div class="band"><section id="sicherheit">
+  <h2>Sicher. Rund um die Uhr.</h2>
+  <p class="sub">Rauch, Wasser, Bewegung – das Haus meldet sich, bevor etwas passiert.</p>
+  <div class="grid">
+    <div class="card"><div class="icon">🚨</div><h3>Rauchmelder</h3>
+      <p>Fünf vernetzte Melder. Bei Alarm: Push aufs Handy und Durchsage auf allen Echos – auch nachts.</p></div>
+    <div class="card"><div class="icon">💧</div><h3>Wassersensor</h3>
+      <p>Im Keller. Push-Nachricht sofort, Sprachansage nur tagsüber.</p></div>
+    <div class="card"><div class="icon">🔐</div><h3>Alarmanlage</h3>
+      <p>Blink und UniFi Alarm-Manager schalten sich automatisch scharf, wenn niemand zuhause ist – und unscharf bei der Heimkehr.</p></div>
+    <div class="card"><div class="icon">📷</div><h3>Kameras</h3>
+      <p>UniFi Protect, Reolink, Blink und eufy – mit Bewegungserkennung und Türklingel.</p></div>
+  </div>
+</section></div>
+
+<section id="komfort">
+  <h2>Kleine Dinge. Großer Komfort.</h2>
+  <p class="sub">Automationen, die man nicht bemerkt – bis man sie vermisst.</p>
+  <div class="grid">
+    <div class="card"><div class="icon">🗑️</div><h3>Müllabfuhr</h3>
+      <p>Abfuhrkalender als Template-Sensor. Erinnerung am Vorabend und Durchsage am Morgen.</p></div>
+    <div class="card"><div class="icon">🔋</div><h3>Batterien</h3>
+      <p>Ein Sensor sammelt alle Geräte mit schwacher Batterie – auch Tinte im Drucker.</p></div>
+    <div class="card"><div class="icon">📢</div><h3>Alexa-Durchsagen</h3>
+      <p>Ein Skript für Durchsagen im ganzen Haus, nur im Erdgeschoss oder nur oben.</p></div>
+    <div class="card"><div class="icon">📺</div><h3>Dashboard auf dem TV</h3>
+      <p>Jede Dashboard-Ansicht lässt sich per Google Cast auf den Fernseher schicken.</p></div>
+    <div class="card"><div class="icon">🖨️</div><h3>Scans</h3>
+      <p>Der Drucker scannt direkt auf das NAS – Home Assistant meldet jede neue Datei.</p></div>
+    <div class="card"><div class="icon">💾</div><h3>NAS-Überwachung</h3>
+      <p>Festplatten, Volume, Füllstand und Temperatur – Warnung nur, wenn wirklich etwas ist.</p></div>
+  </div>
+</section>
+
+<div class="band"><section id="automationen">
+  <h2>Die Automationen.</h2>
+  <p class="sub">Zum Nachbauen. Einfach aufklappen, kopieren und die Entity-IDs an das eigene System anpassen.</p>
+  <p class="note">Alle Beispiele sind anonymisiert: Namen, Geräte-IDs, Adressen und Seriennummern wurden durch Platzhalter wie <code>notify.smartphone</code> oder <code>person.bewohner_1</code> ersetzt.</p>
+  <div id="autos" style="margin-top:40px"></div>
+</section></div>
+
+<section id="technik">
+  <h2>Unter der Haube.</h2>
+  <p class="sub">Home Assistant OS auf eigener Hardware, ergänzt um ein NAS für Medien und Daten.</p>
+  <div class="grid">
+    <div class="card"><h3>Plattform</h3>
+      <span class="pill">Home Assistant OS</span><span class="pill">Synology NAS</span>
+      <span class="pill">MQTT (Mosquitto)</span><span class="pill">VPN-Fernzugriff</span><span class="pill">2FA</span></div>
+    <div class="card"><h3>Energie</h3>
+      <span class="pill">SolaX Cloud</span><span class="pill">APsystems EZ1</span><span class="pill">Tasmota</span>
+      <span class="pill">Xtend Tuya</span><span class="pill">Utility Meter</span></div>
+    <div class="card"><h3>Sicherheit</h3>
+      <span class="pill">UniFi Protect</span><span class="pill">UniFi Network</span><span class="pill">Reolink</span>
+      <span class="pill">Blink</span><span class="pill">eufy</span></div>
+    <div class="card"><h3>Haus &amp; Medien</h3>
+      <span class="pill">Alexa Devices</span><span class="pill">Philips Hue</span><span class="pill">Meross</span>
+      <span class="pill">Sonoff</span><span class="pill">Gree Klima</span><span class="pill">Google Cast</span>
+      <span class="pill">Android TV</span><span class="pill">Samsung TV</span></div>
+  </div>
+</section>
+
+<footer>Privates Hobbyprojekt · Keine Gewähr für die Beispiele · Gebaut mit Home Assistant</footer>
+
+<script>
+  const autos = [
+    { f: 'rauchmelder.yaml',      i: '🔥', t: 'Rauchmelder',              d: 'Push + Durchsage im ganzen Haus' },
+    { f: 'wassersensor.yaml',     i: '💧', t: 'Wassersensor Keller',      d: 'Push sofort, Sprachansage nur tagsüber' },
+    { f: 'alarm.yaml',            i: '🔐', t: 'Alarm scharf / unscharf',  d: 'Anwesenheitsbasiert, zwei Alarmsysteme' },
+    { f: 'batterien.yaml',        i: '🔋', t: 'Batterie-Überwachung',     d: 'Template-Sensor + zwei Automationen' },
+    { f: 'muellabfuhr.yaml',      i: '🗑️', t: 'Müllabfuhr',               d: 'Abfuhrkalender + Erinnerungen' },
+    { f: 'nas-warnungen.yaml',    i: '💾', t: 'NAS-Warnungen',            d: 'Festplatten, Füllstand, Temperatur' },
+    { f: 'alexa-durchsage.yaml',  i: '📢', t: 'Alexa-Durchsage',          d: 'Skript mit Zielauswahl' },
+    { f: 'dashboard-auf-tv.yaml', i: '📺', t: 'Dashboard auf TV',         d: 'Skript mit Google Cast' },
+    { f: 'energie.yaml',          i: '☀️', t: 'Energie-Sensoren',         d: 'Hausverbrauch und Amortisation' },
+  ];
+
+  const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const hl = s => esc(s).split('\n').map(line => {
+    if (/^\s*#/.test(line)) return "<span class='tok-c'>" + line + '</span>';
+    return line
+      .replace(/^(\s*-?\s*)([\w.]+)(:)/, "$1<span class='tok-k'>$2</span>$3")
+      .replace(/"([^"]*)"/g, "<span class='tok-s'>\"$1\"</span>");
+  }).join('\n');
+
+  const box = document.getElementById('autos');
+  autos.forEach(a => {
+    const el = document.createElement('div');
+    el.className = 'auto';
+    el.innerHTML = `<details><summary><span class="icon">${a.i}</span>
+      <span class="t"><b>${a.t}</b><span>${a.d}</span></span><span class="chev">›</span></summary>
+      <div class="code-wrap"><button class="copy">Kopieren</button><pre>Lädt …</pre></div></details>`;
+    box.appendChild(el);
+    const pre = el.querySelector('pre');
+    let raw = '';
+    el.querySelector('details').addEventListener('toggle', async e => {
+      if (!e.target.open || raw) return;
+      try {
+        const r = await fetch('yaml/' + a.f);
+        raw = await r.text();
+        pre.innerHTML = hl(raw);
+      } catch { pre.textContent = 'Datei: yaml/' + a.f; }
+    });
+    el.querySelector('.copy').addEventListener('click', async ev => {
+      try { await navigator.clipboard.writeText(raw); ev.target.textContent = 'Kopiert ✓'; }
+      catch { ev.target.textContent = 'Fehler'; }
+      setTimeout(() => ev.target.textContent = 'Kopieren', 1500);
+    });
+  });
+</script>
+</body>
+</html>

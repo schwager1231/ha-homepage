@@ -1,0 +1,23 @@
+# Energie: Hausverbrauch und Amortisation der PV-Anlage (Template-Helfer)
+
+# --- Template-Sensor "Hausverbrauch" (W) ---
+# PV-Leistung minus Einspeisung = selbst verbrauchte Leistung
+# (die Entity-IDs des Wechselrichters enthalten bei SolaX die Seriennummer –
+#  hier durch XXXXXXXXXX ersetzt)
+{% set a = states('sensor.solax_acpower_XXXXXXXXXX') | float(none) %}
+{% set f = states('sensor.solax_feedinpower_XXXXXXXXXX') | float(none) %}
+{{ [(a - f) | round(0), 0] | max if a is not none and f is not none else none }}
+# device_class: power · state_class: measurement · Einheit: W
+
+---
+# --- Template-Sensor "PV Amortisation Prozent" (%) ---
+# Bisherige Ersparnis im Verhältnis zu den Anschaffungskosten
+# (input_number.kosten_pv_anlage)
+{{ (states('sensor.pv_ersparnis_gesamt') | float(0)
+    / states('input_number.kosten_pv_anlage') | float(1) * 100) | round(1) }}
+
+---
+# --- Utility Meter (Helfer → Verbrauchszähler) ---
+# Netzbezug heute / Monat / Jahr      ← Tasmota-Lesekopf am Stromzähler
+# Einspeisung heute / Monat / Jahr    ← Tasmota-Lesekopf am Stromzähler
+# Wärmepumpe Strom/Wärme heute/Monat/Jahr ← Tuya-Wärmepumpe (Xtend Tuya)

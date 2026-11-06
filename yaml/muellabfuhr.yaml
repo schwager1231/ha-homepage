@@ -1,0 +1,60 @@
+# Müllabfuhr: Template-Sensor mit Abfuhrkalender + Erinnerungen
+# Die Termine unten sind BEISPIELE – trage die Daten deines Abfuhrkalenders ein.
+
+# --- Template-Sensor "Abfuhr heute" (für "Abfuhr morgen" analog mit
+#     (now() + timedelta(days=1)).strftime('%Y-%m-%d')) ---
+{% set d = {
+  '2026-01-05':'G', '2026-01-08':'P', '2026-01-12':'RK',
+  '2026-01-19':'G', '2026-01-26':'RK', '2026-02-05':'P'
+} %}
+{% set nm = {'G':'Gelber Sack', 'P':'Papiertonne', 'RK':'Restmülltonne'} %}
+{% set n = nm.get(d.get(now().strftime('%Y-%m-%d'), ''), '') %}
+{{ n if n else 'keine' }}
+
+---
+# --- Automation: Erinnerung am Vorabend um 20 Uhr ---
+alias: "Müll: Erinnerung am Vorabend 20 Uhr"
+mode: single
+triggers:
+  - trigger: time
+    at: "20:00:00"
+conditions:
+  - condition: not
+    conditions:
+      - condition: state
+        entity_id: sensor.abfuhr_morgen
+        state: [keine, unavailable, unknown]
+actions:
+  - action: notify.send_message
+    target:
+      entity_id: [notify.tablet, notify.smartphone]
+    data:
+      title: "🗑️ Morgen ist Abfuhr"
+      message: "{{ states('sensor.abfuhr_morgen') }} bitte rausstellen."
+  - action: script.alexa_durchsage
+    data:
+      ziel: Überall
+      text: >-
+        Erinnerung: Morgen wird die Abfuhr abgeholt:
+        {{ states('sensor.abfuhr_morgen') }}. Bitte heute noch rausstellen.
+
+---
+# --- Automation: Durchsage am Abfuhrtag um 6 Uhr ---
+alias: "Müll: Alexa-Durchsage am Abfuhrtag"
+mode: single
+triggers:
+  - trigger: time
+    at: "06:00:00"
+conditions:
+  - condition: not
+    conditions:
+      - condition: state
+        entity_id: sensor.abfuhr_heute
+        state: [keine, unavailable, unknown]
+actions:
+  - action: script.alexa_durchsage
+    data:
+      ziel: Überall
+      text: >-
+        Guten Morgen! Heute wird die Abfuhr abgeholt:
+        {{ states('sensor.abfuhr_heute') }}. Bitte rausstellen.

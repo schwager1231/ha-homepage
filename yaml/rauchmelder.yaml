@@ -1,0 +1,32 @@
+# Rauchmelder: Meldung aufs Tablet, Smartphone und Durchsage im ganzen Haus
+# Läuft parallel, damit mehrere Melder gleichzeitig gemeldet werden.
+alias: "Rauchmelder: Meldung aufs Tablet, Smartphone und Durchsage"
+description: >-
+  Schickt eine Nachricht aufs Tablet und Smartphone und macht eine
+  Alexa-Durchsage im ganzen Haus, sobald einer der Rauchmelder auslöst.
+mode: parallel
+max: 5
+triggers:
+  - trigger: state
+    entity_id:
+      - binary_sensor.rauchmelder_wohnzimmer_rauch
+      - binary_sensor.rauchmelder_keller_rauch
+      - binary_sensor.rauchmelder_flur_og_rauch
+      - binary_sensor.rauchmelder_buero_rauch
+      - binary_sensor.rauchmelder_dachboden_rauch
+    to: "on"
+actions:
+  - action: notify.send_message
+    target:
+      entity_id:
+        - notify.tablet
+        - notify.smartphone
+    data:
+      title: "🔥 Rauchalarm"
+      message: "{{ trigger.to_state.name }} hat Rauch erkannt."
+  - action: notify.send_message
+    continue_on_error: true
+    target:
+      entity_id: notify.alexa_ueberall_durchsagen
+    data:
+      message: "Achtung, Rauchalarm. {{ trigger.to_state.name }} hat Rauch erkannt."

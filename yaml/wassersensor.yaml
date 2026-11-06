@@ -1,0 +1,32 @@
+# Wassersensor Keller: Push-Nachricht immer, Sprachansage nur tagsüber
+alias: "Wassersensor Keller: Meldung und Sprachansage"
+description: >-
+  Schickt eine Nachricht aufs Tablet und Smartphone. Zwischen 7 und 22 Uhr
+  spricht zusätzlich je ein Echo im Erdgeschoss und im Obergeschoss.
+mode: single
+triggers:
+  - trigger: state
+    entity_id: binary_sensor.wassersensor_keller_feuchte
+    to: "on"
+actions:
+  - action: notify.send_message
+    target:
+      entity_id:
+        - notify.tablet
+        - notify.smartphone
+    data:
+      title: "💧 Wasser im Keller"
+      message: "Der Wassersensor im Keller meldet Feuchtigkeit."
+  - if:
+      - condition: time
+        after: "07:00:00"
+        before: "22:00:00"
+    then:
+      - action: notify.send_message
+        continue_on_error: true
+        target:
+          entity_id:
+            - notify.echo_show_kueche_sprechen
+            - notify.echo_dot_og_sprechen
+        data:
+          message: "Achtung, der Wassersensor im Keller meldet Feuchtigkeit."
