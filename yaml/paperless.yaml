@@ -1,0 +1,32 @@
+# Paperless-ngx: Push-Nachricht, sobald ein neues Dokument eingegangen ist
+# Voraussetzung: Integration "Paperless-ngx" (liefert u. a. die Sensoren
+# "Dokumente insgesamt" und "Dokumente im Posteingang")
+# Die Adresse des Paperless-Servers ist hier durch einen Platzhalter ersetzt.
+
+alias: "Paperless – neues Dokument melden"
+description: >-
+  Push aufs Smartphone, sobald Paperless mehr Dokumente zählt als zuvor.
+mode: single
+triggers:
+  - trigger: state
+    entity_id: sensor.paperless_dokumente_insgesamt
+    not_from: [unavailable, unknown]
+    not_to: [unavailable, unknown]
+conditions:
+  # Nur bei Zunahme melden, nicht beim Löschen
+  - condition: template
+    value_template: >-
+      {{ trigger.to_state.state | int(0) > trigger.from_state.state | int(0) }}
+actions:
+  - variables:
+      neu: "{{ trigger.to_state.state | int(0) - trigger.from_state.state | int(0) }}"
+  - action: notify.mobile_app_smartphone
+    data:
+      title: "📄 Paperless"
+      message: >-
+        {{ neu }} {{ 'neues Dokument' if neu == 1 else 'neue Dokumente' }}
+        eingegangen ({{ states('sensor.paperless_posteingang') }} im Posteingang).
+      data:
+        # Antippen öffnet Paperless (Android: clickAction, iOS: url)
+        clickAction: "https://paperless.example"
+        url: "https://paperless.example"

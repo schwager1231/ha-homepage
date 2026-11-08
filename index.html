@@ -137,6 +137,7 @@
     <a href="#energie">Energie</a>
     <a href="#sicherheit">Sicherheit</a>
     <a href="#komfort">Komfort</a>
+    <a href="#paperless">Paperless</a>
     <a href="#automationen">Automationen</a>
     <a href="#technik">Technik</a>
     <a href="#entstehung">Projekt</a>
@@ -217,18 +218,34 @@
     <div class="card"><div class="icon">📺</div><h3>Dashboard auf dem TV</h3>
       <p>Jede Dashboard-Ansicht lässt sich per Google Cast auf den Fernseher schicken.</p></div>
     <div class="card"><div class="icon">🖨️</div><h3>Scans</h3>
-      <p>Der Drucker scannt direkt auf das NAS – Home Assistant meldet jede neue Datei.</p></div>
+      <p>Der Drucker scannt direkt auf das NAS. Von dort holt sich Paperless-ngx jedes Dokument ab.</p></div>
     <div class="card"><div class="icon">💾</div><h3>NAS-Überwachung</h3>
       <p>Festplatten, Volume, Füllstand und Temperatur – Warnung nur, wenn wirklich etwas ist.</p></div>
   </div>
 </section>
 
-<div class="band"><section id="automationen">
+<div class="band"><section id="paperless">
+  <h2>Papierlos. Endlich.</h2>
+  <p class="sub">Briefe, Rechnungen, Verträge: Alles, was gescannt wird, landet automatisch in Paperless-ngx, wird per Texterkennung durchsuchbar und meldet sich in Home Assistant.</p>
+  <ol class="steps">
+    <li><span class="n">1</span><div><b>Scannen</b>
+      <p>Der Drucker scannt per Knopfdruck in einen Ordner auf dem NAS.</p></div></li>
+    <li><span class="n">2</span><div><b>Einlesen</b>
+      <p>Paperless-ngx überwacht diesen Ordner, übernimmt jede neue Datei und erkennt den Text per OCR. Danach ist jedes Dokument im Volltext durchsuchbar.</p></div></li>
+    <li><span class="n">3</span><div><b>Einordnen</b>
+      <p>Neue Dokumente landen im Posteingang, bis sie geprüft und mit Korrespondent, Dokumenttyp und Schlagwörtern versehen sind.</p></div></li>
+    <li><span class="n">4</span><div><b>Melden</b>
+      <p>Die Paperless-Integration liefert Home Assistant die Zahl aller Dokumente und die Zahl im Posteingang. Steigt die Gesamtzahl, kommt eine Push-Nachricht aufs Smartphone. Ein Tipp darauf öffnet Paperless.</p></div></li>
+  </ol>
+  <p class="note" style="margin-top:32px">Paperless läuft nur im Heimnetz. Von unterwegs geht es, wie bei Home Assistant, ausschließlich über das VPN. Die Automation zum Nachbauen steht unten bei den Automationen.</p>
+</section></div>
+
+<section id="automationen">
   <h2>Die Automationen.</h2>
   <p class="sub">Zum Nachbauen. Einfach aufklappen, kopieren und die Entity-IDs an das eigene System anpassen.</p>
   <p class="note">Alle Beispiele sind anonymisiert: Namen, Geräte-IDs, Adressen und Seriennummern wurden durch Platzhalter wie <code>notify.smartphone</code> oder <code>person.bewohner_1</code> ersetzt.</p>
   <div id="autos" style="margin-top:40px"></div>
-</section></div>
+</section>
 
 <section id="technik">
   <h2>Unter der Haube.</h2>
@@ -246,7 +263,7 @@
     <div class="card"><h3>Haus &amp; Medien</h3>
       <span class="pill">Alexa Devices</span><span class="pill">Philips Hue</span><span class="pill">Meross</span>
       <span class="pill">Sonoff</span><span class="pill">Gree Klima</span><span class="pill">Google Cast</span>
-      <span class="pill">Android TV</span><span class="pill">Samsung TV</span></div>
+      <span class="pill">Android TV</span><span class="pill">Samsung TV</span><span class="pill">Paperless-ngx</span></div>
   </div>
 </section>
 
@@ -272,7 +289,9 @@
     <li><span class="n">Nov 2026</span><div><b>Die Wärmepumpe legt offen, was sie kann</b>
       <p>Strom- und Wärmezähler, die bisher nur in der Hersteller-App standen, sind jetzt in Home Assistant, samt Jahresarbeitszahl. Jede Dashboard-Ansicht lässt sich per Knopfdruck auf den Fernseher schicken.</p></div></li>
     <li><span class="n">Nov 2026</span><div><b>Diese Website</b>
-      <p>Claude hat die Konfiguration ausgelesen, anonymisiert und in nachbaubare Beispiele übersetzt. Ein Prüfskript hat jede Version nach Namen, IP-Adressen, Seriennummern und Schlüsseln durchsucht, bevor etwas online ging. Ein kleiner Fehler beim ersten Veröffentlichen war schnell behoben.</p></div></li>
+      <p>Claude hat die Konfiguration ausgelesen, anonymisiert und in nachbaubare Beispiele übersetzt. Ein Prüfskript hat jede Version nach Namen, IP-Adressen, Seriennummern und Schlüsseln durchsucht, bevor etwas online ging.</p></div></li>
+    <li><span class="n">Nov 2026</span><div><b>Der Papierkram wird digital</b>
+      <p>Paperless-ngx übernimmt die Dokumente: Scans vom Drucker wandern automatisch hinein, werden per Texterkennung durchsuchbar und sortiert. Über die Paperless-Integration sieht Home Assistant den Posteingang und meldet jedes neue Dokument aufs Handy.</p></div></li>
   </ol>
 
   <h3 class="sub-h">Was ich anderen mitgeben möchte</h3>
@@ -332,6 +351,7 @@
     { f: 'energie.yaml',          i: '☀️', t: 'Energie-Sensoren',         d: 'Hausverbrauch und Amortisation' },
     { f: 'waermepumpe.yaml',      i: '🌡️', t: 'Wärmepumpe',               d: 'Energiezähler, Laufzeit, Ersparnis' },
     { f: 'pelletofen.yaml',       i: '🔥', t: 'Pelletofen',               d: 'Status-Klartext und begrenzter Sollwert' },
+    { f: 'paperless.yaml',        i: '📄', t: 'Paperless',                d: 'Push bei neuem Dokument' },
   ];
 
   const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
