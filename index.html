@@ -132,6 +132,12 @@
   .nav-inner a .new { margin-left: 4px; font-size: 9px; padding: 1px 6px; }
   .quote span { display: block; font-size: 15px; color: var(--muted); margin-top: 12px; letter-spacing: 0; }
 
+  .thanks { list-style: none; padding: 0 !important; margin: 12px 0 0 !important; }
+  .thanks li { margin: 0 0 14px !important; line-height: 1.45; }
+  .thanks li:last-child { margin-bottom: 0 !important; }
+  .thanks a { font-weight: 600; }
+  .thanks span { color: var(--dim); font-size: 14px; }
+  #danke { border-top: 1px solid rgba(255,255,255,.06); }
   /* ===== Animationen ===== */
   #progress { position: absolute; left: 0; bottom: -1px; height: 2px; width: 100%; transform-origin: 0 50%; transform: scaleX(0);
     background: linear-gradient(90deg, var(--accent), var(--sun)); pointer-events: none; }
@@ -218,6 +224,7 @@
     <a href="#automationen">Automationen</a>
     <a href="#technik">Technik</a>
     <a href="#entstehung">Projekt</a>
+    <a href="#danke">Danke</a>
     <a href="#feedback">Feedback</a>
   </div>
   <div id="progress"></div>
@@ -439,6 +446,40 @@
   <p class="quote">Die Ideen und Entscheidungen kommen von mir, die Fleißarbeit und das Prüfen von Claude. So macht Basteln Spaß.<span>Mein Fazit bis hierher</span></p>
 </section>
 
+<section id="danke">
+  <h2>Danke.</h2>
+  <p class="sub">Dieses Haus läuft auf der Arbeit vieler Menschen, die ihre Freizeit in Open Source stecken. Ohne sie gäbe es weder die Integrationen noch die Karten im Dashboard. Diese Projekte stecken hier drin:</p>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))">
+    <div class="card"><div class="icon">🧩</div><h3>Integrationen aus HACS</h3>
+      <ul class="thanks">
+        <li><a href="https://github.com/azerty9971/xtend_tuya" target="_blank" rel="noopener">Xtend Tuya</a> <span>von azerty9971</span><br>Holt Strom- und Wärmezähler aus der Wärmepumpe.</li>
+        <li><a href="https://github.com/NoUsername10/Solax-Cloud-API-for-Home-assistant" target="_blank" rel="noopener">SolaX Cloud API</a> <span>von NoUsername10</span><br>Liefert die Daten der Photovoltaik.</li>
+        <li><a href="https://github.com/krahabb/meross_lan" target="_blank" rel="noopener">Meross LAN</a> <span>von krahabb</span><br>Steuert die Meross-Steckdosen lokal.</li>
+        <li><a href="https://github.com/AlexxIT/SonoffLAN" target="_blank" rel="noopener">Sonoff LAN</a> <span>von AlexxIT</span><br>Bindet die Sonoff-Geräte ein.</li>
+      </ul></div>
+    <div class="card"><div class="icon">🎨</div><h3>Dashboard</h3>
+      <ul class="thanks">
+        <li><a href="https://github.com/Clooos/Bubble-Card" target="_blank" rel="noopener">Bubble Card</a> <span>von Clooos</span><br>Pop-ups und Schaltflächen im Dashboard.</li>
+        <li><a href="https://github.com/thomasloven/lovelace-card-mod" target="_blank" rel="noopener">card-mod</a> <span>von Thomas Lovén</span><br>Eigene Styles für die Dashboard-Karten.</li>
+        <li><a href="https://github.com/piitaya/lovelace-mushroom-themes" target="_blank" rel="noopener">Mushroom Themes</a> <span>von piitaya</span><br>Farben und Schriften.</li>
+        <li><a href="https://community.simon42.com/" target="_blank" rel="noopener">simon42-Community</a><br>Die Vorlage, aus der das Dashboard entstanden ist.</li>
+      </ul></div>
+    <div class="card"><div class="icon">🤖</div><h3>Mit KI bauen</h3>
+      <ul class="thanks">
+        <li><a href="https://github.com/homeassistant-ai/ha-mcp" target="_blank" rel="noopener">ha-mcp</a> <span>von homeassistant-ai</span><br>Die Brücke, über die Claude Home Assistant lesen und bearbeiten kann.</li>
+        <li><a href="https://www.anthropic.com/claude" target="_blank" rel="noopener">Claude</a> <span>von Anthropic</span><br>Fleißarbeit, Prüfen und diese Website.</li>
+      </ul></div>
+    <div class="card"><div class="icon">🏛️</div><h3>Das Fundament</h3>
+      <ul class="thanks">
+        <li><a href="https://www.home-assistant.io/" target="_blank" rel="noopener">Home Assistant</a> <span>und die Open Home Foundation</span><br>Dazu die vielen Freiwilligen hinter den eingebauten Integrationen, von Homematic IP bis FRITZ!Box.</li>
+        <li><a href="https://hacs.xyz/" target="_blank" rel="noopener">HACS</a><br>Der Community-Store, über den alles oben ins Haus kam.</li>
+        <li><a href="https://tasmota.github.io/docs/" target="_blank" rel="noopener">Tasmota</a> und <a href="https://mosquitto.org/" target="_blank" rel="noopener">Mosquitto</a><br>Lesekopf am Stromzähler und der MQTT-Broker dazu.</li>
+        <li><a href="https://docs.paperless-ngx.com/" target="_blank" rel="noopener">Paperless-ngx</a><br>Das papierlose Archiv.</li>
+      </ul></div>
+  </div>
+  <p class="note" style="margin-top:32px">Wer eines dieser Projekte nutzt: Ein Stern auf GitHub, ein guter Fehlerbericht oder eine kleine Spende hilft den Entwicklern mehr, als man denkt.</p>
+</section>
+
 <div class="band"><section id="feedback">
   <h2>Hinweise &amp; Fragen.</h2>
   <p class="sub">Eine Idee, ein Fehler in einem Beispiel oder eine Frage zum Nachbauen? Schreib es hier hinein. Zum Kommentieren brauchst du ein GitHub-Konto.</p>
@@ -460,7 +501,7 @@
           async></script>
 </section></div>
 
-<footer>Privates Hobbyprojekt · Keine Gewähr für die Beispiele · Gebaut mit Home Assistant
+<footer>Privates Hobbyprojekt · Keine Gewähr für die Beispiele · Gebaut mit Home Assistant · <a href="#danke">Danke an alle Entwickler</a>
   <p style="max-width:640px;margin:16px auto 0;line-height:1.5">Datenschutz: Die Seite wird über GitHub Pages ausgeliefert. Für eine anonyme Besucherstatistik wird GoatCounter genutzt – ohne Cookies, ohne Speicherung von IP-Adressen und ohne Tracking über andere Websites hinweg. Kommentare laufen über giscus und werden als GitHub-Discussions im Repository gespeichert; dafür gelten die Datenschutzbestimmungen von GitHub.</p></footer>
 
 <script>
