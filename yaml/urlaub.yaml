@@ -1,0 +1,88 @@
+# Urlaubsmodus: ein Schalter senkt die Heizung im ganzen Haus ab
+# und stellt nach dem Urlaub alles wieder her.
+# Voraussetzung: Helfer "Urlaub" (input_boolean) und ein Merker
+# input_number.urlaub_pelletofen_soll_vorher für den alten Ofen-Sollwert.
+
+alias: "Urlaub: Heizung absenken / zurücksetzen"
+mode: queued
+triggers:
+  - trigger: state
+    entity_id: input_boolean.urlaub
+    to: "on"
+    id: an
+  - trigger: state
+    entity_id: input_boolean.urlaub
+    to: "off"
+    id: aus
+conditions:
+  - condition: not
+    conditions:
+      - condition: state
+        entity_id: input_boolean.urlaub
+        state: [unavailable, unknown]
+actions:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: an
+        sequence:
+          - alias: Alten Ofen-Sollwert merken
+            action: input_number.set_value
+            continue_on_error: true
+            target:
+              entity_id: input_number.urlaub_pelletofen_soll_vorher
+            data:
+              value: "{{ states('number.pelletofen_raum_soll') | float(22) }}"
+          - alias: Wohnräume auf 17 °C
+            action: climate.set_temperature
+            continue_on_error: true
+            target:
+              entity_id: [climate.wohnzimmer, climate.buero, climate.bad]
+            data:
+              hvac_mode: heat
+              temperature: 17
+          - alias: Schlafräume auf 15 °C
+            action: climate.set_temperature
+            continue_on_error: true
+            target:
+              entity_id: [climate.schlafzimmer]
+            data:
+              hvac_mode: heat
+              temperature: 15
+          - alias: Pelletofen auf Minimum
+            action: number.set_value
+            continue_on_error: true
+            target:
+              entity_id: number.pelletofen_raum_soll
+            data:
+              value: 19
+          - action: notify.send_message
+            target:
+              entity_id: notify.smartphone
+            data:
+              title: "🌴 Urlaub aktiv"
+              message: "Heizung abgesenkt, Pelletofen auf 19 °C."
+      - conditions:
+          - condition: trigger
+            id: aus
+        sequence:
+          - alias: Thermostate zurück aufs Zeitprofil
+            action: climate.set_hvac_mode
+            continue_on_error: true
+            target:
+              entity_id: [climate.wohnzimmer, climate.buero, climate.bad, climate.schlafzimmer]
+            data:
+              hvac_mode: auto
+          - alias: Pelletofen auf alten Sollwert
+            action: number.set_value
+            continue_on_error: true
+            target:
+              entity_id: number.pelletofen_raum_soll
+            data:
+              value: "{{ states('input_number.urlaub_pelletofen_soll_vorher') | int(22) }}"
+          - action: notify.send_message
+            target:
+              entity_id: notify.smartphone
+            data:
+              title: "🏠 Urlaub beendet"
+              message: "Heizung wieder nach Zeitprofil."

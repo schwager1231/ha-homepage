@@ -1,0 +1,52 @@
+# Netzwerk-Wächter: Meldung, wenn Router, Switch oder ein Access Point
+# länger als 5 Minuten nicht verbunden ist – und wenn er wieder da ist.
+# Voraussetzung: Integration "UniFi Network" (Zustands-Sensor je Gerät)
+
+alias: "Netzwerk: Wächter für Router und Access Points"
+mode: queued
+max: 20
+triggers:
+  - trigger: state
+    entity_id: &geraete
+      - sensor.router_state
+      - sensor.switch_state
+      - sensor.access_point_1_state
+      - sensor.access_point_2_state
+    from: connected
+    not_to: [unavailable, unknown]
+    for: { minutes: 5 }
+    id: offline
+  - trigger: state
+    entity_id: *geraete
+    not_from: [unavailable, unknown]
+    to: connected
+    id: online
+actions:
+  - variables:
+      geraet: "{{ trigger.to_state.name | replace(' Zustand', '') }}"
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: offline
+        sequence:
+          - action: notify.send_message
+            target:
+              entity_id: notify.smartphone
+            data:
+              title: "⚠️ Netzwerk-Störung"
+              message: "{{ geraet }} ist seit 5 Minuten nicht verbunden."
+      - conditions:
+          - condition: trigger
+            id: online
+          # nur melden, wenn das Gerät vorher wirklich länger weg war
+          - condition: template
+            value_template: >-
+              {{ (trigger.to_state.last_changed
+                  - trigger.from_state.last_changed).total_seconds() >= 300 }}
+        sequence:
+          - action: notify.send_message
+            target:
+              entity_id: notify.smartphone
+            data:
+              title: "✅ Netzwerk wieder ok"
+              message: "{{ geraet }} ist wieder verbunden."

@@ -126,6 +126,10 @@
   .next { color: var(--muted); font-size: 19px; max-width: 760px; margin: 0; }
   @media (max-width: 500px) { .steps li { grid-template-columns: 1fr; gap: 4px; } }
   .quote { font-size: clamp(22px, 3vw, 30px); line-height: 1.3; letter-spacing: -.01em; max-width: 760px; margin: 56px 0 0; text-wrap: balance; }
+  .new { display: inline-block; vertical-align: middle; margin-left: 8px; padding: 2px 8px; border-radius: 980px;
+    background: var(--sun); color: #000; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; line-height: 1.5; }
+  h2 .new { font-size: 13px; vertical-align: super; }
+  .nav-inner a .new { margin-left: 4px; font-size: 9px; padding: 1px 6px; }
   .quote span { display: block; font-size: 15px; color: var(--muted); margin-top: 12px; letter-spacing: 0; }
 </style>
 </head>
@@ -135,6 +139,7 @@
   <div class="nav-inner">
     <span class="brand">⌂ Smart Home</span>
     <a href="#energie">Energie</a>
+    <a href="#heizung">Heizung<span class="new">Neu</span></a>
     <a href="#sicherheit">Sicherheit</a>
     <a href="#komfort">Komfort</a>
     <a href="#paperless">Paperless</a>
@@ -152,7 +157,7 @@
   <div class="stats">
     <div class="stat"><div class="n">85</div><div class="l">Integrationen</div></div>
     <div class="stat"><div class="n">400+</div><div class="l">Entitäten</div></div>
-    <div class="stat"><div class="n">10</div><div class="l">Automationen</div></div>
+    <div class="stat"><div class="n">17</div><div class="l">Automationen</div></div>
     <div class="stat"><div class="n">15</div><div class="l">Kameras</div></div>
   </div>
 </header>
@@ -190,7 +195,26 @@
   <p class="note" style="margin-top:20px">Momentaufnahme aus dem Home-Assistant-Dashboard. Die Karten sind Markdown-Karten, die per Template ein SVG zeichnen.</p>
 </section>
 
-<div class="band"><section id="sicherheit">
+<div class="band"><section id="heizung">
+  <h2>Wärme, Raum für Raum.<span class="new">Neu</span></h2>
+  <p class="sub">Wärmepumpe, Fußbodenheizung und Pelletofen arbeiten zusammen. Jeder Raum hat sein eigenes Thermostat, und überschüssiger Solarstrom landet als Wärme im Estrich.</p>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))">
+    <div class="card"><div class="icon">🎛️</div><h3>Raumthermostate</h3>
+      <p>Homematic IP regelt die Heizkreise der Fußbodenheizung, Raum für Raum und nach Zeitprofil.</p>
+      <ul><li>Ist- und Solltemperatur je Raum</li><li>Pro Raum ein Sensor „Heizkreis heizt“</li></ul>
+      <p style="margin-top:12px"><b style="color:var(--text)">Schnell eingerichtet:</b> In Home Assistant unter Einstellungen → Geräte &amp; Dienste die Integration <a href="https://www.home-assistant.io/integrations/homematicip_cloud/" target="_blank" rel="noopener">HomematicIP Cloud</a> hinzufügen, die Kennung vom Aufkleber des Access Points eintragen und den blauen Knopf am Access Point drücken. Nach wenigen Minuten sind alle Thermostate da, mit denselben Räumen und Zeitprofilen wie in der Homematic-IP-App.</p></div>
+    <div class="card"><div class="icon">☀️</div><h3>PV-Überschuss als Wärme</h3>
+      <p>Speist die PV-Anlage zehn Minuten lang mehr als 2 kW ein, hebt Home Assistant den Sollwert der Wärmepumpe um 3 K an. Der Fußboden speichert die Wärme für den Abend.</p>
+      <ul><li>Unter 500 W geht es zurück auf den Normalwert</li><li>Per Schalter abschaltbar</li></ul></div>
+    <div class="card"><div class="icon">🌴</div><h3>Urlaubsmodus</h3>
+      <p>Ein Schalter senkt das ganze Haus ab: Wohnräume auf 17 °C, Schlafräume auf 15 °C, Pelletofen auf das Minimum.</p>
+      <ul><li>Der alte Ofen-Sollwert wird gemerkt</li><li>Danach wieder alles nach Zeitprofil</li></ul></div>
+    <div class="card"><div class="icon">📈</div><h3>Arbeitszahl</h3>
+      <p>Aus Strom- und Wärmezähler der Wärmepumpe rechnet Home Assistant die Arbeitszahl für heute und den laufenden Monat.</p></div>
+  </div>
+</section></div>
+
+<section id="sicherheit">
   <h2>Sicher. Rund um die Uhr.</h2>
   <p class="sub">Rauch, Wasser, Bewegung – das Haus meldet sich, bevor etwas passiert.</p>
   <div class="grid">
@@ -202,10 +226,12 @@
       <p>Blink und UniFi Alarm-Manager schalten sich automatisch scharf, wenn niemand zuhause ist – und unscharf bei der Heimkehr.</p></div>
     <div class="card"><div class="icon">📷</div><h3>Kameras</h3>
       <p>UniFi Protect, Reolink, Blink und eufy – mit Bewegungserkennung und Türklingel.</p></div>
+    <div class="card"><div class="icon">📶</div><h3>Netzwerk-Wächter<span class="new">Neu</span></h3>
+      <p>Ist der Router, der Switch oder ein Access Point länger als fünf Minuten weg, kommt eine Meldung, und eine zweite, sobald er wieder da ist. Jedes neue Gerät im WLAN wird ebenfalls gemeldet.</p></div>
   </div>
-</section></div>
+</section>
 
-<section id="komfort">
+<div class="band"><section id="komfort">
   <h2>Kleine Dinge. Großer Komfort.</h2>
   <p class="sub">Automationen, die man nicht bemerkt – bis man sie vermisst.</p>
   <div class="grid">
@@ -221,10 +247,12 @@
       <p>Der Drucker scannt direkt auf das NAS. Von dort holt sich Paperless-ngx jedes Dokument ab.</p></div>
     <div class="card"><div class="icon">💾</div><h3>NAS-Überwachung</h3>
       <p>Festplatten, Volume, Füllstand und Temperatur – Warnung nur, wenn wirklich etwas ist.</p></div>
+    <div class="card"><div class="icon">🏠</div><h3>Wer ist zuhause?<span class="new">Neu</span></h3>
+      <p>Die Smartphones im WLAN verraten, wer da ist. Kommt jemand heim, begrüßt Alexa in der Küche nach ein paar Minuten, nachts bleibt sie still.</p></div>
   </div>
-</section>
+</section></div>
 
-<div class="band"><section id="paperless">
+<section id="paperless">
   <h2>Papierlos. Endlich.</h2>
   <p class="sub">Briefe, Rechnungen, Verträge: Alles, was gescannt wird, landet automatisch in Paperless-ngx, wird per Texterkennung durchsuchbar und meldet sich in Home Assistant.</p>
   <ol class="steps">
@@ -238,14 +266,14 @@
       <p>Die Paperless-Integration liefert Home Assistant die Zahl aller Dokumente und die Zahl im Posteingang. Steigt die Gesamtzahl, kommt eine Push-Nachricht aufs Smartphone. Ein Tipp darauf öffnet Paperless.</p></div></li>
   </ol>
   <p class="note" style="margin-top:32px">Paperless läuft nur im Heimnetz. Von unterwegs geht es, wie bei Home Assistant, ausschließlich über das VPN. Die Automation zum Nachbauen steht unten bei den Automationen.</p>
-</section></div>
+</section>
 
-<section id="automationen">
+<div class="band"><section id="automationen">
   <h2>Die Automationen.</h2>
   <p class="sub">Zum Nachbauen. Einfach aufklappen, kopieren und die Entity-IDs an das eigene System anpassen.</p>
   <p class="note">Alle Beispiele sind anonymisiert: Namen, Geräte-IDs, Adressen und Seriennummern wurden durch Platzhalter wie <code>notify.smartphone</code> oder <code>person.bewohner_1</code> ersetzt.</p>
   <div id="autos" style="margin-top:40px"></div>
-</section>
+</section></div>
 
 <section id="technik">
   <h2>Unter der Haube.</h2>
@@ -253,10 +281,10 @@
   <div class="grid">
     <div class="card"><h3>Plattform</h3>
       <span class="pill">Home Assistant OS</span><span class="pill">Synology NAS</span>
-      <span class="pill">MQTT (Mosquitto)</span><span class="pill">VPN-Fernzugriff</span><span class="pill">2FA</span></div>
+      <span class="pill">MQTT (Mosquitto)</span><span class="pill">FRITZ!Box<span class="new">Neu</span></span><span class="pill">VPN-Fernzugriff</span><span class="pill">2FA</span></div>
     <div class="card"><h3>Energie</h3>
       <span class="pill">SolaX Cloud</span><span class="pill">APsystems EZ1</span><span class="pill">Tasmota</span>
-      <span class="pill">Xtend Tuya</span><span class="pill">Utility Meter</span></div>
+      <span class="pill">Xtend Tuya</span><span class="pill">Utility Meter</span><span class="pill">Homematic IP<span class="new">Neu</span></span></div>
     <div class="card"><h3>Sicherheit</h3>
       <span class="pill">UniFi Protect</span><span class="pill">UniFi Network</span><span class="pill">Reolink</span>
       <span class="pill">Blink</span><span class="pill">eufy</span></div>
@@ -292,6 +320,10 @@
       <p>Claude hat die Konfiguration ausgelesen, anonymisiert und in nachbaubare Beispiele übersetzt. Ein Prüfskript hat jede Version nach Namen, IP-Adressen, Seriennummern und Schlüsseln durchsucht, bevor etwas online ging.</p></div></li>
     <li><span class="n">Nov 2026</span><div><b>Der Papierkram wird digital</b>
       <p>Paperless-ngx übernimmt die Dokumente: Scans vom Drucker wandern automatisch hinein, werden per Texterkennung durchsuchbar und sortiert. Über die Paperless-Integration sieht Home Assistant den Posteingang und meldet jedes neue Dokument aufs Handy.</p></div></li>
+    <li><span class="n">Nov 2026</span><div><b>Das Netzwerk passt auf sich auf<span class="new">Neu</span></b>
+      <p>Die FRITZ!Box ist eingebunden, ein Wächter meldet, wenn Router, Switch oder ein Access Point ausfallen, und jedes neue Gerät im WLAN fällt sofort auf. Über die Smartphones im WLAN weiß Home Assistant, wer zuhause ist.</p></div></li>
+    <li><span class="n">Nov 2026</span><div><b>Die Heizung wird Raum für Raum smart<span class="new">Neu</span></b>
+      <p>Homematic IP bringt die Raumthermostate der Fußbodenheizung in Home Assistant. Dazu kamen ein Urlaubsmodus für das ganze Haus, eine Automation, die Solarstrom-Überschuss als Wärme im Fußboden speichert, und die Arbeitszahl der Wärmepumpe für Tag und Monat.</p></div></li>
   </ol>
 
   <h3 class="sub-h">Was ich anderen mitgeben möchte</h3>
@@ -352,6 +384,9 @@
     { f: 'waermepumpe.yaml',      i: '🌡️', t: 'Wärmepumpe',               d: 'Energiezähler, Laufzeit, Ersparnis' },
     { f: 'pelletofen.yaml',       i: '🔥', t: 'Pelletofen',               d: 'Status-Klartext und begrenzter Sollwert' },
     { f: 'paperless.yaml',        i: '📄', t: 'Paperless',                d: 'Push bei neuem Dokument' },
+    { f: 'wp-pv-boost.yaml',      i: '☀️', t: 'PV-Überschuss Boost', n: 1,      d: 'Solarstrom als Wärme im Fußboden' },
+    { f: 'urlaub.yaml',           i: '🌴', t: 'Urlaubsmodus', n: 1,             d: 'Heizung absenken und zurücksetzen' },
+    { f: 'netzwerk-waechter.yaml',i: '📶', t: 'Netzwerk-Wächter', n: 1,         d: 'Router und Access Points überwachen' },
   ];
 
   const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -367,7 +402,7 @@
     const el = document.createElement('div');
     el.className = 'auto';
     el.innerHTML = `<details><summary><span class="icon">${a.i}</span>
-      <span class="t"><b>${a.t}</b><span>${a.d}</span></span><span class="chev">›</span></summary>
+      <span class="t"><b>${a.t}${a.n ? '<span class="new">Neu</span>' : ''}</b><span>${a.d}</span></span><span class="chev">›</span></summary>
       <div class="code-wrap"><button class="copy">Kopieren</button><pre>Lädt …</pre></div></details>`;
     box.appendChild(el);
     const pre = el.querySelector('pre');

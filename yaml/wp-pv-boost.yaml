@@ -1,0 +1,82 @@
+# Wärmepumpe: Solarstrom-Überschuss als Wärme im Fußboden speichern
+# Speist die PV-Anlage 10 Minuten lang mehr als 2 kW ein, hebt die
+# Automation den Sollwert der Wärmepumpe um 3 K an. Fällt die Einspeisung
+# 10 Minuten unter 500 W, geht es zurück auf den gemerkten Normalwert.
+# Helfer: input_boolean.wp_pv_boost (Funktion an/aus),
+#         input_boolean.wp_pv_boost_aktiv (Boost läuft gerade),
+#         input_number.wp_sollwert_normal (Merker)
+# (die Entity-ID der Einspeisung enthält bei SolaX eine Kennung –
+#  hier durch XXXXXXXXXX ersetzt)
+
+alias: "Wärmepumpe: PV-Überschuss Boost"
+mode: queued
+triggers:
+  - trigger: numeric_state
+    entity_id: sensor.solax_feedinpower_XXXXXXXXXX
+    above: 2000
+    for: { minutes: 10 }
+    id: start
+  - trigger: state
+    entity_id: input_boolean.wp_pv_boost
+    to: "on"
+    id: start
+  - trigger: numeric_state
+    entity_id: sensor.solax_feedinpower_XXXXXXXXXX
+    below: 500
+    for: { minutes: 10 }
+    id: stop
+  - trigger: state
+    entity_id: [input_boolean.wp_pv_boost, switch.waermepumpe_schalter]
+    to: "off"
+    id: stop
+  - trigger: state
+    entity_id: input_boolean.urlaub
+    to: "on"
+    id: stop
+actions:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: start
+          - condition: state
+            entity_id: [input_boolean.wp_pv_boost, switch.waermepumpe_schalter]
+            state: "on"
+          - condition: state
+            entity_id: [input_boolean.wp_pv_boost_aktiv, input_boolean.urlaub]
+            state: "off"
+          - condition: numeric_state
+            entity_id: sensor.solax_feedinpower_XXXXXXXXXX
+            above: 2000
+        sequence:
+          - alias: Normalwert merken
+            action: input_number.set_value
+            target:
+              entity_id: input_number.wp_sollwert_normal
+            data:
+              value: "{{ states('number.waermepumpe_solltemperatur') | float(34) }}"
+          - alias: Sollwert +3 K (höchstens 60 °C)
+            action: number.set_value
+            target:
+              entity_id: number.waermepumpe_solltemperatur
+            data:
+              value: "{{ [states('input_number.wp_sollwert_normal') | float(34) + 3, 60] | min }}"
+          - action: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.wp_pv_boost_aktiv
+      - conditions:
+          - condition: trigger
+            id: stop
+          - condition: state
+            entity_id: input_boolean.wp_pv_boost_aktiv
+            state: "on"
+        sequence:
+          - alias: Normalwert zurück
+            action: number.set_value
+            continue_on_error: true
+            target:
+              entity_id: number.waermepumpe_solltemperatur
+            data:
+              value: "{{ states('input_number.wp_sollwert_normal') | float(34) }}"
+          - action: input_boolean.turn_off
+            target:
+              entity_id: input_boolean.wp_pv_boost_aktiv
