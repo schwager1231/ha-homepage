@@ -94,6 +94,11 @@
   .note { border-left: 3px solid var(--green); padding: 4px 0 4px 16px; color: var(--muted); max-width: 720px; }
 
   footer { text-align: center; color: var(--dim); font-size: 13px; padding: 48px 16px 64px; border-top: 1px solid rgba(255,255,255,.06); }
+  .visits { display: inline-flex; align-items: center; gap: 10px; margin: 0 0 24px; padding: 8px 18px; border-radius: 980px;
+    background: var(--card); border: 1px solid var(--card-border); color: var(--muted); font-size: 14px; }
+  .visits[hidden] { display: none; }
+  .visits b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+  .visits .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px var(--green); }
 
   @media (max-width: 700px) {
     .stats { grid-template-columns: repeat(2, 1fr); gap: 32px 16px; }
@@ -504,8 +509,9 @@
           async></script>
 </section></div>
 
-<footer>Privates Hobbyprojekt · Keine Gewähr für die Beispiele · Gebaut mit Home Assistant · <a href="#danke">Danke an alle Entwickler</a>
-  <p style="max-width:640px;margin:16px auto 0;line-height:1.5">Datenschutz: Die Seite wird über GitHub Pages ausgeliefert. Für eine anonyme Besucherstatistik wird GoatCounter genutzt – ohne Cookies, ohne Speicherung von IP-Adressen und ohne Tracking über andere Websites hinweg. Kommentare laufen über giscus und werden als GitHub-Discussions im Repository gespeichert; dafür gelten die Datenschutzbestimmungen von GitHub.</p></footer>
+<footer><p class="visits" id="visits" hidden><span class="dot"></span><span><b>0</b> Besuche bisher</span></p><br>
+  Privates Hobbyprojekt · Keine Gewähr für die Beispiele · Gebaut mit Home Assistant · <a href="#danke">Danke an alle Entwickler</a>
+  <p style="max-width:640px;margin:16px auto 0;line-height:1.5">Datenschutz: Die Seite wird über GitHub Pages ausgeliefert. Für eine anonyme Besucherstatistik und den Besucherzähler wird GoatCounter genutzt – ohne Cookies, ohne Speicherung von IP-Adressen und ohne Tracking über andere Websites hinweg. Kommentare laufen über giscus und werden als GitHub-Discussions im Repository gespeichert; dafür gelten die Datenschutzbestimmungen von GitHub.</p></footer>
 
 <script>
   const autos = [
@@ -626,6 +632,34 @@
     };
     addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
     update();
+  })();
+</script>
+<script>
+  /* ===== Besucherzähler (GoatCounter, ohne Cookies) ===== */
+  (() => {
+    const box = document.getElementById('visits'), out = box.querySelector('b');
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const fmt = n => n.toLocaleString('de-DE');
+    fetch('https://schwager.goatcounter.com/counter/TOTAL.json')
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(d => {
+        const end = parseInt(String(d.count).replace(/\D/g, ''), 10);
+        if (!end) return;
+        box.hidden = false;
+        if (still) { out.textContent = fmt(end); return; }
+        const io = new IntersectionObserver(es => {
+          if (!es[0].isIntersecting) return; io.disconnect();
+          const t0 = performance.now(), dur = 1600;
+          const tick = t => {
+            const k = Math.min((t - t0) / dur, 1), e = 1 - Math.pow(1 - k, 4);
+            out.textContent = fmt(Math.round(end * e));
+            if (k < 1) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        });
+        io.observe(box);
+      })
+      .catch(() => {});
   })();
 </script>
 </body>
