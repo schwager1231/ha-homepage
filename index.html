@@ -117,6 +117,14 @@
   .shot figcaption { color: var(--muted); font-size: 15px; margin-top: 18px; }
   .shot figcaption b { color: var(--text); display: block; font-size: 17px; margin-bottom: 2px; }
 
+
+  /* Fernbedienung */
+  .remote-wrap { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,520px); gap: 48px; align-items: center; }
+  .remote-wrap ul { color: var(--muted); padding-left: 18px; margin: 0; font-size: 17px; }
+  .remote-wrap li { margin: 8px 0; } .remote-wrap li b { color: var(--text); font-weight: 600; }
+  .vac-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .vac-pair svg { display: block; width: 100%; height: auto; }
+  @media (max-width: 860px) { .remote-wrap { grid-template-columns: 1fr; gap: 32px; } }
   /* Entstehung */
   .duo { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
   .duo .who { font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--sun); margin: 0 0 10px; }
@@ -222,9 +230,10 @@
   <div class="nav-inner">
     <span class="brand">⌂ Smart Home</span>
     <a href="#energie">Energie</a>
-    <a href="#heizung">Heizung<span class="new">Neu</span></a>
+    <a href="#heizung">Heizung</a>
     <a href="#sicherheit">Sicherheit</a>
     <a href="#komfort">Komfort</a>
+    <a href="#fernbedienung">Fernbedienung<span class="new">Neu</span></a>
     <a href="#paperless">Paperless</a>
     <a href="#automationen">Automationen</a>
     <a href="#technik">Technik</a>
@@ -301,7 +310,7 @@
 </section>
 
 <div class="band"><section id="heizung">
-  <h2>Wärme, Raum für Raum.<span class="new">Neu</span></h2>
+  <h2>Wärme, Raum für Raum.</h2>
   <p class="sub">Wärmepumpe, Fußbodenheizung und Pelletofen arbeiten zusammen. Jeder Raum hat sein eigenes Thermostat, und überschüssiger Solarstrom landet als Wärme im Estrich.</p>
   <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))">
     <div class="card"><div class="icon">🎛️</div><h3>Raumthermostate</h3>
@@ -331,7 +340,7 @@
       <p>Blink und UniFi Alarm-Manager schalten sich automatisch scharf, wenn niemand zuhause ist – und unscharf bei der Heimkehr.</p></div>
     <div class="card"><div class="icon">📷</div><h3>Kameras</h3>
       <p>UniFi Protect, Reolink, Blink und eufy – mit Bewegungserkennung und Türklingel.</p></div>
-    <div class="card"><div class="icon">📶</div><h3>Netzwerk-Wächter<span class="new">Neu</span></h3>
+    <div class="card"><div class="icon">📶</div><h3>Netzwerk-Wächter</h3>
       <p>Ist der Router, der Switch oder ein Access Point länger als fünf Minuten weg, kommt eine Meldung, und eine zweite, sobald er wieder da ist. Jedes neue Gerät im WLAN wird ebenfalls gemeldet.</p></div>
   </div>
 </section>
@@ -352,10 +361,68 @@
       <p>Der Drucker scannt direkt auf das NAS. Von dort holt sich Paperless-ngx jedes Dokument ab.</p></div>
     <div class="card"><div class="icon">💾</div><h3>NAS-Überwachung</h3>
       <p>Festplatten, Volume, Füllstand und Temperatur – Warnung nur, wenn wirklich etwas ist.</p></div>
-    <div class="card"><div class="icon">🏠</div><h3>Wer ist zuhause?<span class="new">Neu</span></h3>
+    <div class="card"><div class="icon">🏠</div><h3>Wer ist zuhause?</h3>
       <p>Die Smartphones im WLAN verraten, wer da ist. Kommt jemand heim, begrüßt Alexa in der Küche nach ein paar Minuten, nachts bleibt sie still.</p></div>
   </div>
 </section></div>
+
+<section id="fernbedienung">
+  <h2>Die Fernbedienung.<span class="new">Neu</span></h2>
+  <p class="sub">Für die beiden Saugroboter gibt es jetzt eine eigene Fernbedienung im Home-Assistant-Dashboard. Eine pro Etage, gebaut wie eine echte: Start in der Mitte, Akku im Ring, Saugstärke darunter.</p>
+  <div class="remote-wrap">
+    <div>
+      <ul>
+        <li><b>Start, Pause, Zurück zur Station</b> und „Wo bist du?“ zum Wiederfinden</li>
+        <li><b>Saugstärke</b> Leise, Normal oder Stark mit einem Tipp</li>
+        <li><b>Was gerade läuft, leuchtet blau:</b> der aktive Modus und die gewählte Stufe</li>
+        <li><b>Akkustand</b> mitten im Steuerkreis, Status oben im Display</li>
+        <li>Darüber zwei Knöpfe <b>„Beide starten“</b> und <b>„Beide heim“</b>, darunter die Restlaufzeit von Filter und Bürsten</li>
+      </ul>
+      <p class="note" style="margin-top:28px">Gebaut als Picture-Elements-Karte: Das Gehäuse ist ein SVG, die Tasten sind Symbole darauf, und card-mod lässt die aktive Taste leuchten.</p>
+    </div>
+    <figure class="shot">
+<div class="vac-pair">
+<svg class="vac" viewBox="0 0 300 560" role="img" aria-label="Saugroboter-Fernbedienung Saugroboter EG (nur Abbildung)">
+<defs><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a1b1e"/><stop offset="1" stop-color="#050505"/></linearGradient>
+<filter id="glowa" x="-1" y="-1" width="3" height="3"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#2997ff" flood-opacity=".55"/></filter></defs>
+<rect x="14" y="6" width="272" height="548" rx="56" fill="url(#ga)" stroke="rgba(255,255,255,.10)" stroke-width="2"/>
+<circle cx="150" cy="30" r="4" fill="#2997ff"/>
+<text x="150" y="68" font-family="-apple-system,BlinkMacSystemFont,Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="19" font-weight="600" letter-spacing=".5" fill="#fff" text-anchor="middle">Saugroboter EG</text>
+<rect x="46" y="84" width="208" height="40" rx="20" fill="rgba(255,255,255,.045)" stroke="rgba(255,255,255,.08)"/>
+<text x="150" y="109" font-family="-apple-system,BlinkMacSystemFont,Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#fff" text-anchor="middle">Saugt</text>
+<circle cx="150" cy="250" r="98" fill="rgba(255,255,255,.045)" stroke="rgba(255,255,255,.10)" stroke-width="2"/>
+<circle cx="150" cy="250" r="44" fill="#0b0c0e" stroke="rgba(41,151,255,.45)" stroke-width="2"/>
+<text x="150" y="255" font-family="-apple-system,BlinkMacSystemFont,Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#2997ff" text-anchor="middle">78 %</text>
+<circle cx="150" cy="185.92000000000002" r="22.0" fill="rgba(41,151,255,.16)" filter="url(#glowa)"/><path transform="translate(136.0 171.92000000000002) scale(1.1666666666666667)" d="M8,5.14V19.14L19,12.14L8,5.14Z" fill="#2997ff"/><path transform="translate(204.0 237.76) scale(1.0)" d="M14,19H18V5H14M6,19H10V5H6V19Z" fill="#c9ccd2"/><path transform="translate(138.0 301.59999999999997) scale(1.0)" d="M15 13L11 17V14H2V12H11V9L15 13M5 20V16H7V18H17V10.19L12 5.69L7.21 10H4.22L12 3L22 12H19V20H5Z" fill="#c9ccd2"/><path transform="translate(73.0 238.76) scale(0.9166666666666666)" d="M12,2C15.31,2 18,4.66 18,7.95C18,12.41 12,19 12,19C12,19 6,12.41 6,7.95C6,4.66 8.69,2 12,2M12,6A2,2 0 0,0 10,8A2,2 0 0,0 12,10A2,2 0 0,0 14,8A2,2 0 0,0 12,6M20,19C20,21.21 16.42,23 12,23C7.58,23 4,21.21 4,19C4,17.71 5.22,16.56 7.11,15.83L7.75,16.74C6.67,17.19 6,17.81 6,18.5C6,19.88 8.69,21 12,21C15.31,21 18,19.88 18,18.5C18,17.81 17.33,17.19 16.25,16.74L16.89,15.83C18.78,16.56 20,17.71 20,19Z" fill="#c9ccd2"/>
+<text x="150" y="378" font-family="Helvetica,Arial,sans-serif" font-size="11" letter-spacing="2.5" fill="#8a8f98" text-anchor="middle">SAUGSTÄRKE</text>
+<rect x="40" y="394" width="60" height="60" rx="22" fill="rgba(255,255,255,.045)" stroke="rgba(255,255,255,.10)"/><rect x="120" y="394" width="60" height="60" rx="22" fill="rgba(255,255,255,.045)" stroke="rgba(255,255,255,.10)"/><rect x="200" y="394" width="60" height="60" rx="22" fill="rgba(255,255,255,.045)" stroke="rgba(255,255,255,.10)"/>
+<path transform="translate(58.900000000000006 414.04) scale(0.9166666666666666)" d="M13 19C13 17.59 13.5 16.3 14.3 15.28C14.17 14.97 14.03 14.65 13.86 14.34C14.26 14 14.57 13.59 14.77 13.11C15.26 13.21 15.78 13.39 16.25 13.67C17.07 13.25 18 13 19 13C20.05 13 21.03 13.27 21.89 13.74C21.95 13.37 22 12.96 22 12.5C22 8.92 18.03 8.13 14.33 10.13C14 9.73 13.59 9.42 13.11 9.22C13.3 8.29 13.74 7.24 14.73 6.75C17.09 5.57 17 2 12.5 2C8.93 2 8.14 5.96 10.13 9.65C9.72 9.97 9.4 10.39 9.21 10.87C8.28 10.68 7.23 10.25 6.73 9.26C5.56 6.89 2 7 2 11.5C2 15.07 5.95 15.85 9.64 13.87C9.96 14.27 10.39 14.59 10.88 14.79C10.68 15.71 10.24 16.75 9.26 17.24C6.9 18.42 7 22 11.5 22C12.31 22 13 21.78 13.5 21.41C13.19 20.67 13 19.86 13 19M12 13C11.43 13 11 12.55 11 12S11.43 11 12 11C12.54 11 13 11.45 13 12S12.54 13 12 13M17 15V17H18V23H20V15H17Z" fill="#c9ccd2"/><circle cx="150" cy="425.04" r="19.0" fill="rgba(41,151,255,.16)" filter="url(#glowa)"/><path transform="translate(139.0 414.04) scale(0.9166666666666666)" d="M13 19C13 17.59 13.5 16.3 14.3 15.28C14.17 14.97 14.03 14.65 13.86 14.34C14.26 14 14.57 13.59 14.77 13.11C15.26 13.21 15.78 13.39 16.25 13.67C17.07 13.25 18 13 19 13C20.05 13 21.03 13.27 21.89 13.74C21.95 13.37 22 12.96 22 12.5C22 8.92 18.03 8.13 14.33 10.13C14 9.73 13.59 9.42 13.11 9.22C13.3 8.29 13.74 7.24 14.73 6.75C17.09 5.57 17 2 12.5 2C8.93 2 8.14 5.96 10.13 9.65C9.72 9.97 9.4 10.39 9.21 10.87C8.28 10.68 7.23 10.25 6.73 9.26C5.56 6.89 2 7 2 11.5C2 15.07 5.95 15.85 9.64 13.87C9.96 14.27 10.39 14.59 10.88 14.79C10.68 15.71 10.24 16.75 9.26 17.24C6.9 18.42 7 22 11.5 22C12.31 22 13 21.78 13.5 21.41C13.19 20.67 13 19.86 13 19M12 13C11.43 13 11 12.55 11 12S11.43 11 12 11C12.54 11 13 11.45 13 12S12.54 13 12 13M16 15V17H19V18H18C16.9 18 16 18.9 16 20V23H21V21H18V20H19C20.11 20 21 19.11 21 18V17C21 15.9 20.11 15 19 15H16Z" fill="#2997ff"/><path transform="translate(219.10000000000002 414.04) scale(0.9166666666666666)" d="M13 19C13 17.59 13.5 16.3 14.3 15.28C14.17 14.97 14.03 14.65 13.86 14.34C14.26 14 14.57 13.59 14.77 13.11C15.26 13.21 15.78 13.39 16.25 13.67C17.07 13.25 18 13 19 13C20.05 13 21.03 13.27 21.89 13.74C21.95 13.37 22 12.96 22 12.5C22 8.92 18.03 8.13 14.33 10.13C14 9.73 13.59 9.42 13.11 9.22C13.3 8.29 13.74 7.24 14.73 6.75C17.09 5.57 17 2 12.5 2C8.93 2 8.14 5.96 10.13 9.65C9.72 9.97 9.4 10.39 9.21 10.87C8.28 10.68 7.23 10.25 6.73 9.26C5.56 6.89 2 7 2 11.5C2 15.07 5.95 15.85 9.64 13.87C9.96 14.27 10.39 14.59 10.88 14.79C10.68 15.71 10.24 16.75 9.26 17.24C6.9 18.42 7 22 11.5 22C12.31 22 13 21.78 13.5 21.41C13.19 20.67 13 19.86 13 19M12 13C11.43 13 11 12.55 11 12S11.43 11 12 11C12.54 11 13 11.45 13 12S12.54 13 12 13M21 21V20.5C21 19.67 20.33 19 19.5 19C20.33 19 21 18.33 21 17.5V17C21 15.89 20.1 15 19 15H16V17H19V18H17V20H19V21H16V23H19C20.11 23 21 22.11 21 21" fill="#c9ccd2"/>
+<g font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#c9ccd2" text-anchor="middle"><text x="70" y="474">Leise</text><text x="150" y="474">Normal</text><text x="230" y="474">Stark</text></g>
+<g fill="rgba(255,255,255,.12)"><circle cx="126" cy="515" r="3"/><circle cx="138" cy="515" r="3"/><circle cx="150" cy="515" r="3"/><circle cx="162" cy="515" r="3"/><circle cx="174" cy="515" r="3"/></g>
+</svg>
+<svg class="vac" viewBox="0 0 300 560" role="img" aria-label="Saugroboter-Fernbedienung Saugroboter OG (nur Abbildung)">
+<defs><linearGradient id="gb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a1b1e"/><stop offset="1" stop-color="#050505"/></linearGradient>
+<filter id="glowb" x="-1" y="-1" width="3" height="3"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#2997ff" flood-opacity=".55"/></filter></defs>
+<rect x="14" y="6" width="272" height="548" rx="56" fill="url(#gb)" stroke="rgba(255,255,255,.10)" stroke-width="2"/>
+<circle cx="150" cy="30" r="4" fill="#2997ff"/>
+<text x="150" y="68" font-family="-apple-system,BlinkMacSystemFont,Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="19" font-weight="600" letter-spacing=".5" fill="#fff" text-anchor="middle">Saugroboter OG</text>
+<rect x="46" y="84" width="208" height="40" rx="20" fill="rgba(255,255,255,.045)" stroke="rgba(255,255,255,.08)"/>
+<text x="150" y="109" font-family="-apple-system,BlinkMacSystemFont,Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#fff" text-anchor="middle">Angedockt</text>
+<circle cx="150" cy="250" r="98" fill="rgba(255,255,255,.045)" stroke="rgba(255,255,255,.10)" stroke-width="2"/>
+<circle cx="150" cy="250" r="44" fill="#0b0c0e" stroke="rgba(41,151,255,.45)" stroke-width="2"/>
+<text x="150" y="255" font-family="-apple-system,BlinkMacSystemFont,Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#2997ff" text-anchor="middle">100 %</text>
+<path transform="translate(136.0 171.92000000000002) scale(1.1666666666666667)" d="M8,5.14V19.14L19,12.14L8,5.14Z" fill="#c9ccd2"/><path transform="translate(204.0 237.76) scale(1.0)" d="M14,19H18V5H14M6,19H10V5H6V19Z" fill="#c9ccd2"/><circle cx="150" cy="313.59999999999997" r="20.0" fill="rgba(41,151,255,.16)" filter="url(#glowb)"/><path transform="translate(138.0 301.59999999999997) scale(1.0)" d="M15 13L11 17V14H2V12H11V9L15 13M5 20V16H7V18H17V10.19L12 5.69L7.21 10H4.22L12 3L22 12H19V20H5Z" fill="#2997ff"/><path transform="translate(73.0 238.76) scale(0.9166666666666666)" d="M12,2C15.31,2 18,4.66 18,7.95C18,12.41 12,19 12,19C12,19 6,12.41 6,7.95C6,4.66 8.69,2 12,2M12,6A2,2 0 0,0 10,8A2,2 0 0,0 12,10A2,2 0 0,0 14,8A2,2 0 0,0 12,6M20,19C20,21.21 16.42,23 12,23C7.58,23 4,21.21 4,19C4,17.71 5.22,16.56 7.11,15.83L7.75,16.74C6.67,17.19 6,17.81 6,18.5C6,19.88 8.69,21 12,21C15.31,21 18,19.88 18,18.5C18,17.81 17.33,17.19 16.25,16.74L16.89,15.83C18.78,16.56 20,17.71 20,19Z" fill="#c9ccd2"/>
+<text x="150" y="378" font-family="Helvetica,Arial,sans-serif" font-size="11" letter-spacing="2.5" fill="#8a8f98" text-anchor="middle">SAUGSTÄRKE</text>
+<rect x="40" y="394" width="60" height="60" rx="22" fill="rgba(255,255,255,.045)" stroke="rgba(255,255,255,.10)"/><rect x="120" y="394" width="60" height="60" rx="22" fill="rgba(255,255,255,.045)" stroke="rgba(255,255,255,.10)"/><rect x="200" y="394" width="60" height="60" rx="22" fill="rgba(255,255,255,.045)" stroke="rgba(255,255,255,.10)"/>
+<circle cx="69.9" cy="425.04" r="19.0" fill="rgba(41,151,255,.16)" filter="url(#glowb)"/><path transform="translate(58.900000000000006 414.04) scale(0.9166666666666666)" d="M13 19C13 17.59 13.5 16.3 14.3 15.28C14.17 14.97 14.03 14.65 13.86 14.34C14.26 14 14.57 13.59 14.77 13.11C15.26 13.21 15.78 13.39 16.25 13.67C17.07 13.25 18 13 19 13C20.05 13 21.03 13.27 21.89 13.74C21.95 13.37 22 12.96 22 12.5C22 8.92 18.03 8.13 14.33 10.13C14 9.73 13.59 9.42 13.11 9.22C13.3 8.29 13.74 7.24 14.73 6.75C17.09 5.57 17 2 12.5 2C8.93 2 8.14 5.96 10.13 9.65C9.72 9.97 9.4 10.39 9.21 10.87C8.28 10.68 7.23 10.25 6.73 9.26C5.56 6.89 2 7 2 11.5C2 15.07 5.95 15.85 9.64 13.87C9.96 14.27 10.39 14.59 10.88 14.79C10.68 15.71 10.24 16.75 9.26 17.24C6.9 18.42 7 22 11.5 22C12.31 22 13 21.78 13.5 21.41C13.19 20.67 13 19.86 13 19M12 13C11.43 13 11 12.55 11 12S11.43 11 12 11C12.54 11 13 11.45 13 12S12.54 13 12 13M17 15V17H18V23H20V15H17Z" fill="#2997ff"/><path transform="translate(139.0 414.04) scale(0.9166666666666666)" d="M13 19C13 17.59 13.5 16.3 14.3 15.28C14.17 14.97 14.03 14.65 13.86 14.34C14.26 14 14.57 13.59 14.77 13.11C15.26 13.21 15.78 13.39 16.25 13.67C17.07 13.25 18 13 19 13C20.05 13 21.03 13.27 21.89 13.74C21.95 13.37 22 12.96 22 12.5C22 8.92 18.03 8.13 14.33 10.13C14 9.73 13.59 9.42 13.11 9.22C13.3 8.29 13.74 7.24 14.73 6.75C17.09 5.57 17 2 12.5 2C8.93 2 8.14 5.96 10.13 9.65C9.72 9.97 9.4 10.39 9.21 10.87C8.28 10.68 7.23 10.25 6.73 9.26C5.56 6.89 2 7 2 11.5C2 15.07 5.95 15.85 9.64 13.87C9.96 14.27 10.39 14.59 10.88 14.79C10.68 15.71 10.24 16.75 9.26 17.24C6.9 18.42 7 22 11.5 22C12.31 22 13 21.78 13.5 21.41C13.19 20.67 13 19.86 13 19M12 13C11.43 13 11 12.55 11 12S11.43 11 12 11C12.54 11 13 11.45 13 12S12.54 13 12 13M16 15V17H19V18H18C16.9 18 16 18.9 16 20V23H21V21H18V20H19C20.11 20 21 19.11 21 18V17C21 15.9 20.11 15 19 15H16Z" fill="#c9ccd2"/><path transform="translate(219.10000000000002 414.04) scale(0.9166666666666666)" d="M13 19C13 17.59 13.5 16.3 14.3 15.28C14.17 14.97 14.03 14.65 13.86 14.34C14.26 14 14.57 13.59 14.77 13.11C15.26 13.21 15.78 13.39 16.25 13.67C17.07 13.25 18 13 19 13C20.05 13 21.03 13.27 21.89 13.74C21.95 13.37 22 12.96 22 12.5C22 8.92 18.03 8.13 14.33 10.13C14 9.73 13.59 9.42 13.11 9.22C13.3 8.29 13.74 7.24 14.73 6.75C17.09 5.57 17 2 12.5 2C8.93 2 8.14 5.96 10.13 9.65C9.72 9.97 9.4 10.39 9.21 10.87C8.28 10.68 7.23 10.25 6.73 9.26C5.56 6.89 2 7 2 11.5C2 15.07 5.95 15.85 9.64 13.87C9.96 14.27 10.39 14.59 10.88 14.79C10.68 15.71 10.24 16.75 9.26 17.24C6.9 18.42 7 22 11.5 22C12.31 22 13 21.78 13.5 21.41C13.19 20.67 13 19.86 13 19M12 13C11.43 13 11 12.55 11 12S11.43 11 12 11C12.54 11 13 11.45 13 12S12.54 13 12 13M21 21V20.5C21 19.67 20.33 19 19.5 19C20.33 19 21 18.33 21 17.5V17C21 15.89 20.1 15 19 15H16V17H19V18H17V20H19V21H16V23H19C20.11 23 21 22.11 21 21" fill="#c9ccd2"/>
+<g font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#c9ccd2" text-anchor="middle"><text x="70" y="474">Leise</text><text x="150" y="474">Normal</text><text x="230" y="474">Stark</text></g>
+<g fill="rgba(255,255,255,.12)"><circle cx="126" cy="515" r="3"/><circle cx="138" cy="515" r="3"/><circle cx="150" cy="515" r="3"/><circle cx="162" cy="515" r="3"/><circle cx="174" cy="515" r="3"/></g>
+</svg>
+</div>
+      <figcaption><b>Nur zur Ansicht</b>Abbild der Karte im Dashboard. Die Tasten auf dieser Seite haben keine Funktion.</figcaption>
+    </figure>
+  </div>
+</section>
 
 <section id="paperless">
   <h2>Papierlos. Endlich.</h2>
@@ -386,10 +453,10 @@
   <div class="grid">
     <div class="card"><h3>Plattform</h3>
       <span class="pill">Home Assistant OS</span><span class="pill">Synology NAS</span>
-      <span class="pill">MQTT (Mosquitto)</span><span class="pill">FRITZ!Box<span class="new">Neu</span></span><span class="pill">VPN-Fernzugriff</span><span class="pill">2FA</span></div>
+      <span class="pill">MQTT (Mosquitto)</span><span class="pill">FRITZ!Box</span><span class="pill">VPN-Fernzugriff</span><span class="pill">2FA</span></div>
     <div class="card"><h3>Energie</h3>
       <span class="pill">SolaX Cloud</span><span class="pill">APsystems EZ1</span><span class="pill">Tasmota</span>
-      <span class="pill">Xtend Tuya</span><span class="pill">Utility Meter</span><span class="pill">Homematic IP<span class="new">Neu</span></span></div>
+      <span class="pill">Xtend Tuya</span><span class="pill">Utility Meter</span><span class="pill">Homematic IP</span></div>
     <div class="card"><h3>Sicherheit</h3>
       <span class="pill">UniFi Protect</span><span class="pill">UniFi Network</span><span class="pill">Reolink</span>
       <span class="pill">Blink</span><span class="pill">eufy</span></div>
@@ -425,10 +492,12 @@
       <p>Claude hat die Konfiguration ausgelesen, anonymisiert und in nachbaubare Beispiele übersetzt. Ein Prüfskript hat jede Version nach Namen, IP-Adressen, Seriennummern und Schlüsseln durchsucht, bevor etwas online ging.</p></div></li>
     <li><span class="n">Nov 2026</span><div><b>Der Papierkram wird digital</b>
       <p>Paperless-ngx übernimmt die Dokumente: Scans vom Drucker wandern automatisch hinein, werden per Texterkennung durchsuchbar und sortiert. Über die Paperless-Integration sieht Home Assistant den Posteingang und meldet jedes neue Dokument aufs Handy.</p></div></li>
-    <li><span class="n">Nov 2026</span><div><b>Das Netzwerk passt auf sich auf<span class="new">Neu</span></b>
+    <li><span class="n">Nov 2026</span><div><b>Das Netzwerk passt auf sich auf</b>
       <p>Die FRITZ!Box ist eingebunden, ein Wächter meldet, wenn Router, Switch oder ein Access Point ausfallen, und jedes neue Gerät im WLAN fällt sofort auf. Über die Smartphones im WLAN weiß Home Assistant, wer zuhause ist.</p></div></li>
-    <li><span class="n">Nov 2026</span><div><b>Die Heizung wird Raum für Raum smart<span class="new">Neu</span></b>
+    <li><span class="n">Nov 2026</span><div><b>Die Heizung wird Raum für Raum smart</b>
       <p>Homematic IP bringt die Raumthermostate der Fußbodenheizung in Home Assistant. Dazu kamen ein Urlaubsmodus für das ganze Haus, eine Automation, die Solarstrom-Überschuss als Wärme im Fußboden speichert, und die Arbeitszahl der Wärmepumpe für Tag und Monat.</p></div></li>
+    <li><span class="n">Nov 2026</span><div><b>Die Saugroboter bekommen eine Fernbedienung<span class="new">Neu</span></b>
+      <p>Für jeden der beiden Saugroboter gibt es im Dashboard eine Fernbedienung: Start, Pause, zurück zur Station, Saugstärke und Akkustand auf einen Blick. Dazu zwei Knöpfe für beide zugleich und die Restlaufzeit von Filter und Bürsten.</p></div></li>
   </ol>
 
   <h3 class="sub-h">Was ich anderen mitgeben möchte</h3>
@@ -527,9 +596,9 @@
     { f: 'waermepumpe.yaml',      i: '🌡️', t: 'Wärmepumpe',               d: 'Energiezähler, Laufzeit, Ersparnis' },
     { f: 'pelletofen.yaml',       i: '🔥', t: 'Pelletofen',               d: 'Status-Klartext und begrenzter Sollwert' },
     { f: 'paperless.yaml',        i: '📄', t: 'Paperless',                d: 'Push bei neuem Dokument' },
-    { f: 'wp-pv-boost.yaml',      i: '☀️', t: 'PV-Überschuss Boost', n: 1,      d: 'Solarstrom als Wärme im Fußboden' },
-    { f: 'urlaub.yaml',           i: '🌴', t: 'Urlaubsmodus', n: 1,             d: 'Heizung absenken und zurücksetzen' },
-    { f: 'netzwerk-waechter.yaml',i: '📶', t: 'Netzwerk-Wächter', n: 1,         d: 'Router und Access Points überwachen' },
+    { f: 'wp-pv-boost.yaml',      i: '☀️', t: 'PV-Überschuss Boost',           d: 'Solarstrom als Wärme im Fußboden' },
+    { f: 'urlaub.yaml',           i: '🌴', t: 'Urlaubsmodus',                  d: 'Heizung absenken und zurücksetzen' },
+    { f: 'netzwerk-waechter.yaml',i: '📶', t: 'Netzwerk-Wächter',              d: 'Router und Access Points überwachen' },
   ];
 
   const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -545,7 +614,7 @@
     const el = document.createElement('div');
     el.className = 'auto';
     el.innerHTML = `<details><summary><span class="icon">${a.i}</span>
-      <span class="t"><b>${a.t}${a.n ? '<span class="new">Neu</span>' : ''}</b><span>${a.d}</span></span><span class="chev">›</span></summary>
+      <span class="t"><b>${a.t}${a.n ? '' : ''}</b><span>${a.d}</span></span><span class="chev">›</span></summary>
       <div class="code-wrap"><button class="copy">Kopieren</button><pre>Lädt …</pre></div></details>`;
     box.appendChild(el);
     const pre = el.querySelector('pre');
