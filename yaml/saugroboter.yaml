@@ -1,0 +1,90 @@
+# Saugroboter: zwei Automationen und ein Skript
+# 1. Saugen, wenn niemand zu Hause ist (werktags, höchstens einmal am Tag)
+# 2. Meldung aufs Handy, wenn ein Roboter fertig ist
+# 3. Skript "Beide jetzt saugen" für den Knopf im Dashboard
+# Voraussetzung: Saugroboter-Integration mit vacuum-Entität und
+# Sensoren für Akku, gereinigte Fläche und Reinigungszeit
+
+# --- 1. Saugen, wenn niemand zu Hause ist ---------------------------
+alias: "Saugroboter: Saugen wenn niemand zu Hause"
+description: >-
+  Werktags 9–17 Uhr: Sind alle seit 15 Minuten weg, starten beide
+  Saugroboter. Höchstens einmal pro Tag.
+mode: single
+max_exceeded: silent
+triggers:
+  - trigger: state
+    entity_id: [person.bewohner_1, person.bewohner_2]
+    to: not_home
+    for: { minutes: 15 }
+conditions:
+  - condition: state
+    entity_id: person.bewohner_1
+    state: not_home
+  - condition: state
+    entity_id: person.bewohner_2
+    state: not_home
+  - condition: time
+    after: "09:00:00"
+    before: "17:00:00"
+    weekday: [mon, tue, wed, thu, fri]
+  # beide stehen in der Station ...
+  - condition: state
+    entity_id: [vacuum.saugroboter_eg, vacuum.saugroboter_og]
+    state: docked
+  # ... und haben genug Akku
+  - condition: numeric_state
+    entity_id: [sensor.saugroboter_eg_batterie, sensor.saugroboter_og_batterie]
+    above: 50
+  # heute noch nicht gelaufen
+  - condition: template
+    value_template: >-
+      {{ this.attributes.last_triggered is none
+         or as_local(this.attributes.last_triggered).date() != now().date() }}
+actions:
+  - action: vacuum.start
+    target:
+      entity_id: [vacuum.saugroboter_eg, vacuum.saugroboter_og]
+  - action: notify.smartphone
+    data:
+      title: "🤖 Saugroboter gestartet"
+      message: "Niemand ist zu Hause, beide Saugroboter saugen jetzt."
+
+---
+# --- 2. Fertig-Meldung ----------------------------------------------
+alias: "Saugroboter: Fertig-Meldung"
+description: Push, wenn ein Roboter nach dem Saugen wieder in der Station steht.
+mode: parallel
+triggers:
+  - trigger: state
+    entity_id: [vacuum.saugroboter_eg, vacuum.saugroboter_og]
+    from: [cleaning, returning]
+    to: docked
+conditions:
+  # nur melden, wenn wirklich gesaugt wurde
+  - condition: template
+    value_template: >-
+      {{ states(trigger.entity_id | replace('vacuum.', 'sensor.')
+         ~ '_reinigungsbereich') | float(0) > 0 }}
+actions:
+  - variables:
+      basis: "{{ trigger.entity_id | replace('vacuum.', 'sensor.') }}"
+  - action: notify.smartphone
+    data:
+      title: "🧹 {{ state_attr(trigger.entity_id, 'friendly_name') }} ist fertig"
+      message: >-
+        {{ states(basis ~ '_reinigungsbereich') | float(0) | round(0) | int }} m²
+        in {{ states(basis ~ '_reinigungszeit') | float(0) | round(0) | int }}
+        Minuten gesaugt. Zurück in der Station.
+
+---
+# --- 3. Skript: Beide jetzt saugen ----------------------------------
+# script:
+saugroboter_beide_starten:
+  alias: "Saugroboter: Beide jetzt saugen"
+  icon: mdi:robot-vacuum-variant
+  mode: single
+  sequence:
+    - action: vacuum.start
+      target:
+        entity_id: [vacuum.saugroboter_eg, vacuum.saugroboter_og]
